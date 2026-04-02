@@ -122,7 +122,6 @@ export default function DirectAdd({ onSuccess }) {
       )}
 
       <form onSubmit={handleSubmit} className="direct-add-form">
-        {/* Webshop kiválasztás */}
         <div className="form-section">
           <div className="section-header">
             <h3>{t('1. Webshop kiválasztása')}</h3>
@@ -155,7 +154,6 @@ export default function DirectAdd({ onSuccess }) {
           )}
         </div>
 
-        {/* Összeg megadása */}
         {selectedWebshop && (
           <div className="form-section">
             <div className="section-header">
@@ -177,7 +175,6 @@ export default function DirectAdd({ onSuccess }) {
           </div>
         )}
 
-        {/* Hallgatók kiválasztása */}
         {selectedWebshop && amount && (
           <div className="form-section">
             <div className="section-header">
@@ -236,7 +233,6 @@ export default function DirectAdd({ onSuccess }) {
           </div>
         )}
 
-        {/* Összegzés és küldés */}
         {selectedWebshop && amount && selectedStudents.length > 0 && (
           <div className="form-section summary-section">
             <div className="summary-card">

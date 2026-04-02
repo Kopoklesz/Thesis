@@ -40,13 +40,12 @@ export class SignatureService {
         private dataSource: DataSource,
     ) { }
 
-    // ==================== JOGOSULTSÁG ELLENŐRZÉS ====================
 
     private async checkWebshopPermission(userId: number, webshopId: number): Promise<void> {
         const user = await this.userRepository.findOne({ where: { user_id: userId } });
 
         if (user.role === 'admin') {
-            return; // Admin mindent csinálhat
+            return;
         }
 
         const webshop = await this.webshopRepository.findOne({ where: { webshop_id: webshopId } });
@@ -55,12 +54,10 @@ export class SignatureService {
             throw new NotFoundException('Webshop nem található');
         }
 
-        // Tulajdonos ellenőrzés
         if (webshop.teacher_id === userId) {
             return;
         }
 
-        // Partner ellenőrzés
         const isPartner = await this.partnerRepository.findOne({
             where: {
                 webshop_id: webshopId,
@@ -73,7 +70,6 @@ export class SignatureService {
         }
     }
 
-    // ==================== KÓD GENERÁLÁS ====================
 
     private generateUniqueCode(): string {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -90,7 +86,6 @@ export class SignatureService {
     async generateCodes(userId: number, dto: GenerateCodesDto): Promise<any> {
         await this.checkWebshopPermission(userId, dto.webshopId);
 
-        // Lejárati dátum validáció
         const expiryDate = new Date(dto.expiryDate);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -104,7 +99,6 @@ export class SignatureService {
         await queryRunner.startTransaction();
 
         try {
-            // Event létrehozása
             const event = this.eventRepository.create({
                 webshop_id: dto.webshopId,
                 teacher_id: userId,
@@ -116,7 +110,6 @@ export class SignatureService {
 
             const savedEvent = await queryRunner.manager.save(event);
 
-            // Egyedi kódok generálása
             const codes: SignatureCode[] = [];
             const generatedCodes: string[] = [];
 
@@ -150,7 +143,6 @@ export class SignatureService {
             await queryRunner.manager.save(codes);
             await queryRunner.commitTransaction();
 
-            // PDF generálás
             const webshop = await this.webshopRepository.findOne({ where: { webshop_id: dto.webshopId } });
             const pdfBuffer = await this.generateCodesPDF(generatedCodes, webshop, dto.codeValue, expiryDate);
 
@@ -177,7 +169,6 @@ export class SignatureService {
             doc.on('end', () => resolve(Buffer.concat(chunks)));
             doc.on('error', reject);
 
-            // Fejléc
             doc.fontSize(20)
                 .fillColor(webshop.header_color_code)
                 .text(webshop.subject_name, { align: 'center' });
@@ -192,7 +183,6 @@ export class SignatureService {
 
             doc.moveDown(2);
 
-            // Kódok kiírása
             doc.fontSize(14).fillColor('#000000').text('Beváltható Kódok:', { underline: true });
             doc.moveDown(1);
 
@@ -202,7 +192,6 @@ export class SignatureService {
                     .text(`${index + 1}. ${code}`, { align: 'left' });
                 doc.moveDown(0.5);
 
-                // Oldalváltás minden 15 kód után
                 if ((index + 1) % 15 === 0 && index + 1 < codes.length) {
                     doc.addPage();
                     doc.fontSize(20)
@@ -216,12 +205,10 @@ export class SignatureService {
         });
     }
 
-    // ==================== QR KÓD GENERÁLÁS ====================
 
     async generateQR(userId: number, dto: GenerateQRDto): Promise<any> {
         await this.checkWebshopPermission(userId, dto.webshopId);
 
-        // Lejárati dátum validáció
         const expiryDate = new Date(dto.expiryDate);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -235,7 +222,6 @@ export class SignatureService {
         await queryRunner.startTransaction();
 
         try {
-            // Event létrehozása
             const event = this.eventRepository.create({
                 webshop_id: dto.webshopId,
                 teacher_id: userId,
@@ -247,7 +233,6 @@ export class SignatureService {
 
             const savedEvent = await queryRunner.manager.save(event);
 
-            // Egyedi QR token generálása
             const qrToken = crypto.randomBytes(32).toString('hex');
 
             const qr = this.qrRepository.create({
@@ -261,7 +246,6 @@ export class SignatureService {
             const savedQR = await queryRunner.manager.save(qr);
             await queryRunner.commitTransaction();
 
-            // QR kód PNG generálás
             const webshop = await this.webshopRepository.findOne({ where: { webshop_id: dto.webshopId } });
             const pngBuffer = await this.generateQRImage(qrToken, webshop, dto.codeValue, expiryDate, dto.maxActivations);
 
@@ -288,7 +272,6 @@ export class SignatureService {
         expiryDate: Date,
         maxActivations: number,
     ): Promise<Buffer> {
-        // QR kód generálás
         const qrImageUrl = await QRCode.toDataURL(qrData, {
             width: 400,
             margin: 2,
@@ -298,13 +281,9 @@ export class SignatureService {
             },
         });
 
-        // Egyszerű megoldás: visszaadjuk a QR kódot, a szöveget majd a frontenden lehet rátenni
-        // Vagy használhatunk canvas library-t (node-canvas) a szöveg hozzáadásához
         const base64Data = qrImageUrl.replace(/^data:image\/png;base64,/, '');
         return Buffer.from(base64Data, 'base64');
     }
-
-    // ==================== DIREKT EGYENLEG HOZZÁADÁS ====================
 
     async addBalanceDirect(userId: number, dto: AddBalanceDirectDto): Promise<any> {
         await this.checkWebshopPermission(userId, dto.webshopId);
@@ -314,19 +293,17 @@ export class SignatureService {
         await queryRunner.startTransaction();
 
         try {
-            // Event létrehozása
             const event = this.eventRepository.create({
                 webshop_id: dto.webshopId,
                 teacher_id: userId,
                 generation_type: GenerationType.DIRECT,
                 total_codes: dto.userIds.length,
                 code_value: dto.amount,
-                expiry_date: new Date(), // Direct add esetén nincs lejárat
+                expiry_date: new Date(),
             });
 
             await queryRunner.manager.save(event);
 
-            // Egyenlegek frissítése
             for (const targetUserId of dto.userIds) {
                 let balance = await queryRunner.manager.findOne(UserBalance, {
                     where: {
@@ -363,15 +340,12 @@ export class SignatureService {
         }
     }
 
-    // ==================== KÓD BEVÁLTÁS ====================
-
     async redeemCode(userId: number, dto: RedeemCodeDto): Promise<any> {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
-        await queryRunner.startTransaction('SERIALIZABLE'); // Konkurencia kezelés
+        await queryRunner.startTransaction('SERIALIZABLE');
 
         try {
-            // Kód keresése PESSIMISTIC_WRITE lockkal
             const code = await queryRunner.manager.findOne(SignatureCode, {
                 where: { code: dto.code, is_redeemed: false },
                 relations: ['event', 'event.webshop'],
@@ -382,20 +356,17 @@ export class SignatureService {
                 throw new NotFoundException('A kód nem található vagy már beváltották');
             }
 
-            // Lejárat ellenőrzés
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const expiryDate = new Date(code.event.expiry_date);
             expiryDate.setHours(0, 0, 0, 0);
 
             if (expiryDate < today) {
-                // Lejárt kód törlése
                 await queryRunner.manager.remove(code);
                 await queryRunner.commitTransaction();
                 throw new BadRequestException('A kód lejárt');
             }
 
-            // Egyenleg frissítés
             let balance = await queryRunner.manager.findOne(UserBalance, {
                 where: {
                     user: { user_id: userId },
@@ -415,7 +386,6 @@ export class SignatureService {
                 await queryRunner.manager.save(balance);
             }
 
-            // Kód azonnali törlése (beváltás után)
             await queryRunner.manager.remove(code);
 
             await queryRunner.commitTransaction();
@@ -435,15 +405,12 @@ export class SignatureService {
         }
     }
 
-    // ==================== QR BEVÁLTÁS ====================
-
     async redeemQR(userId: number, dto: RedeemQRDto): Promise<any> {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction('SERIALIZABLE');
 
         try {
-            // QR keresése PESSIMISTIC_WRITE lockkal
             const qr = await queryRunner.manager.findOne(SignatureQR, {
                 where: { qr_data: dto.qrData, is_active: true },
                 relations: ['event', 'event.webshop'],
@@ -454,7 +421,6 @@ export class SignatureService {
                 throw new NotFoundException('A QR kód nem található vagy már nem aktív');
             }
 
-            // Lejárat ellenőrzés
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const expiryDate = new Date(qr.event.expiry_date);
@@ -464,12 +430,10 @@ export class SignatureService {
                 throw new BadRequestException('A QR kód lejárt');
             }
 
-            // Limit ellenőrzés
             if (qr.current_activations >= qr.max_activations) {
                 throw new BadRequestException('A QR kód elérte a maximális aktiválási limitet');
             }
 
-            // Duplikáció ellenőrzés
             const existingActivation = await queryRunner.manager.findOne(SignatureQRActivation, {
                 where: {
                     qr_id: qr.qr_id,
@@ -481,7 +445,6 @@ export class SignatureService {
                 throw new BadRequestException('Már aktiváltad ezt a QR kódot');
             }
 
-            // Egyenleg frissítés
             let balance = await queryRunner.manager.findOne(UserBalance, {
                 where: {
                     user: { user_id: userId },
@@ -501,17 +464,14 @@ export class SignatureService {
                 await queryRunner.manager.save(balance);
             }
 
-            // Aktiválás mentése
             const activation = queryRunner.manager.create(SignatureQRActivation, {
                 qr_id: qr.qr_id,
                 user_id: userId,
             });
             await queryRunner.manager.save(activation);
 
-            // QR aktiválások számának növelése
             qr.current_activations++;
 
-            // Ha elérte a limitet, inaktiválás
             if (qr.current_activations >= qr.max_activations) {
                 qr.is_active = false;
             }
@@ -535,8 +495,6 @@ export class SignatureService {
             await queryRunner.release();
         }
     }
-
-    // ==================== LEKÉRDEZÉSEK ====================
 
     async getTeacherCodes(userId: number, webshopId?: number): Promise<any> {
         const whereCondition: any = {
@@ -620,8 +578,6 @@ export class SignatureService {
         });
     }
 
-    // ==================== TÖRLÉS ====================
-
     async deleteCode(userId: number, codeId: number): Promise<any> {
         const code = await this.codeRepository.findOne({
             where: { code_id: codeId },
@@ -662,13 +618,10 @@ export class SignatureService {
         };
     }
 
-    // ==================== CLEANUP (CRON) ====================
-
     async cleanupExpiredCodes(): Promise<any> {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Lejárt event-ek keresése
         const expiredEvents = await this.eventRepository.find({
             where: {},
             relations: ['codes', 'qrs'],
@@ -682,19 +635,16 @@ export class SignatureService {
             expiryDate.setHours(0, 0, 0, 0);
 
             if (expiryDate < today) {
-                // Kódok törlése
                 if (event.codes && event.codes.length > 0) {
                     await this.codeRepository.remove(event.codes);
                     deletedCodesCount += event.codes.length;
                 }
 
-                // QR-ok törlése
                 if (event.qrs && event.qrs.length > 0) {
                     await this.qrRepository.remove(event.qrs);
                     deletedQRsCount += event.qrs.length;
                 }
 
-                // Event törlése
                 await this.eventRepository.remove(event);
             }
         }

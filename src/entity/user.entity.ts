@@ -53,11 +53,6 @@ export class User {
   @OneToMany(() => Webshop, webshop => webshop.teacher)
   webshops: Webshop[];
 
-  /**
-   * Email domain alapján automatikus szerepkör meghatározás
-   * FIGYELEM: Ez a statikus metódus már elavult!
-   * Használd a PasswordService.determineRoleFromEmail() metódust helyette.
-   */
   static determineRoleFromEmail(email: string): UserRole {
     if (email.endsWith('@student.uni-pannon.hu')) {
       return UserRole.STUDENT;
@@ -66,7 +61,6 @@ export class User {
     } else if (email === 'admin@uni-pannon.hu') {
       return UserRole.ADMIN;
     }
-    // Alapértelmezett diák szerepkör
     return UserRole.STUDENT;
   }
 }

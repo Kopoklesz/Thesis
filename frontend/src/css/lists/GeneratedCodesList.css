@@ -135,7 +135,6 @@
   transform: rotate(180deg);
 }
 
-/* Event Details */
 .event-details {
   padding: 24px;
   background: white;
@@ -241,7 +240,6 @@
   transform: scale(1.1);
 }
 
-/* Loading, Error, Empty States */
 .list-loading {
   display: flex;
   flex-direction: column;

@@ -24,7 +24,6 @@ const Shop = () => {
 
   useEffect(() => {
     fetchWebshopData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webshopId]);
 
   const fetchWebshopData = async () => {

@@ -23,10 +23,6 @@ import { UserRole } from '../entity/user.entity';
 export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) { }
 
-  /**
-   * Vásárlás létrehozása
-   * POST /purchase/:userId/:webshopId
-   */
   @Post(':userId/:webshopId')
   @UseGuards(JwtAuthGuard)
   async createPurchase(
@@ -34,7 +30,6 @@ export class PurchaseController {
     @Param('userId', ParseIntPipe) userId: number,
     @Param('webshopId', ParseIntPipe) webshopId: number,
   ) {
-    // Ellenőrzés: csak saját kosarából vásárolhat (kivéve ADMIN)
     if (req.user.role !== UserRole.ADMIN && req.user.sub !== userId) {
       throw new ForbiddenException('Csak a saját kosaradból vásárolhatsz');
     }
@@ -54,10 +49,6 @@ export class PurchaseController {
     }
   }
 
-  /**
-   * Felhasználó összes vásárlási előzményének lekérése
-   * GET /purchase/user/:userId
-   */
   @Get('user/:userId')
   @UseGuards(JwtAuthGuard)
   async getUserPurchases(@Param('userId', ParseIntPipe) userId: number) {
@@ -68,10 +59,6 @@ export class PurchaseController {
     }
   }
 
-  /**
-   * Felhasználó vásárlási előzményei egy adott webshopban
-   * GET /purchase/user/:userId/webshop/:webshopId
-   */
   @Get('user/:userId/webshop/:webshopId')
   @UseGuards(JwtAuthGuard)
   async getUserPurchasesByWebshop(
@@ -85,10 +72,6 @@ export class PurchaseController {
     }
   }
 
-  /**
-   * Webshop összes vásárlásának lekérése (csak tanár és admin)
-   * GET /purchase/webshop/:webshopId
-   */
   @Get('webshop/:webshopId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -100,10 +83,6 @@ export class PurchaseController {
     }
   }
 
-  /**
-   * Vásárlási statisztika (csak tanár és admin)
-   * GET /purchase/webshop/:webshopId/stats
-   */
   @Get('webshop/:webshopId/stats')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)

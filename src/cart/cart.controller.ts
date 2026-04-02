@@ -23,11 +23,6 @@ import { UserRole } from '../entity/user.entity';
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  /**
-   * Kosár tartalmának lekérése
-   * Csak saját kosarat lehet lekérni (kivéve ADMIN)
-   * GET /cart/:userId/:webshopId
-   */
   @Get(':userId/:webshopId')
   @UseGuards(JwtAuthGuard)
   async getCart(
@@ -35,7 +30,6 @@ export class CartController {
     @Param('userId', ParseIntPipe) userId: number,
     @Param('webshopId', ParseIntPipe) webshopId: number
   ) {
-    // Ellenőrzés: csak saját kosarat lehet lekérni (kivéve ADMIN)
     if (req.user.role !== UserRole.ADMIN && req.user.sub !== userId) {
       throw new ForbiddenException('Csak a saját kosarad tartalmát tekintheted meg');
     }
@@ -43,11 +37,6 @@ export class CartController {
     return this.cartService.getCart(userId, webshopId);
   }
 
-  /**
-   * Kosárba tétel / mennyiség módosítás
-   * Csak saját kosárba lehet tenni (kivéve ADMIN)
-   * POST /cart/:userId/:webshopId
-   */
   @Post(':userId/:webshopId')
   @UseGuards(JwtAuthGuard)
   async addToCart(
@@ -56,7 +45,6 @@ export class CartController {
     @Param('webshopId', ParseIntPipe) webshopId: number,
     @Body() addToCartDto: AddToCartDto
   ) {
-    // Ellenőrzés: csak saját kosárba lehet tenni (kivéve ADMIN)
     if (req.user.role !== UserRole.ADMIN && req.user.sub !== userId) {
       throw new ForbiddenException('Csak a saját kosaradba tehetsz termékeket');
     }

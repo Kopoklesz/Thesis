@@ -2,7 +2,6 @@ import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } f
 
 export class AddSignatureGeneration1730000000001 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
-        // Enum típus létrehozása a generálás típusához
         await queryRunner.query(`
       DO $$
       BEGIN
@@ -13,7 +12,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
       $$;
     `);
 
-        // 1. signature_generation_event tábla
         await queryRunner.createTable(
             new Table({
                 name: 'signature_generation_event',
@@ -67,7 +65,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             true
         );
 
-        // Foreign keys a signature_generation_event táblához
         await queryRunner.createForeignKey(
             'signature_generation_event',
             new TableForeignKey({
@@ -90,7 +87,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             })
         );
 
-        // Index a lejárati dátumra (cron job optimalizálás)
         await queryRunner.createIndex(
             'signature_generation_event',
             new TableIndex({
@@ -99,7 +95,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             })
         );
 
-        // 2. signature_code tábla
         await queryRunner.createTable(
             new Table({
                 name: 'signature_code',
@@ -142,7 +137,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             true
         );
 
-        // Foreign keys a signature_code táblához
         await queryRunner.createForeignKey(
             'signature_code',
             new TableForeignKey({
@@ -165,7 +159,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             })
         );
 
-        // Unique index a kódra (gyors lookup)
         await queryRunner.createIndex(
             'signature_code',
             new TableIndex({
@@ -175,7 +168,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             })
         );
 
-        // 3. signature_qr tábla
         await queryRunner.createTable(
             new Table({
                 name: 'signature_qr',
@@ -218,7 +210,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             true
         );
 
-        // Foreign key a signature_qr táblához
         await queryRunner.createForeignKey(
             'signature_qr',
             new TableForeignKey({
@@ -230,7 +221,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             })
         );
 
-        // Unique index a qr_data-ra
         await queryRunner.createIndex(
             'signature_qr',
             new TableIndex({
@@ -240,7 +230,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             })
         );
 
-        // 4. signature_qr_activation tábla
         await queryRunner.createTable(
             new Table({
                 name: 'signature_qr_activation',
@@ -271,7 +260,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             true
         );
 
-        // Foreign keys a signature_qr_activation táblához
         await queryRunner.createForeignKey(
             'signature_qr_activation',
             new TableForeignKey({
@@ -294,7 +282,6 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
             })
         );
 
-        // Composite index - egy user csak egyszer aktiválhatja ugyanazt a QR-t
         await queryRunner.createIndex(
             'signature_qr_activation',
             new TableIndex({
@@ -306,13 +293,11 @@ export class AddSignatureGeneration1730000000001 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        // Táblák törlése fordított sorrendben (foreign key constraints miatt)
         await queryRunner.dropTable('signature_qr_activation', true);
         await queryRunner.dropTable('signature_qr', true);
         await queryRunner.dropTable('signature_code', true);
         await queryRunner.dropTable('signature_generation_event', true);
 
-        // Enum típus törlése
         await queryRunner.query(`DROP TYPE IF EXISTS "public"."generation_type"`);
     }
 }

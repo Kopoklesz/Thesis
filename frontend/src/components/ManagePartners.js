@@ -23,7 +23,6 @@ const ManagePartners = () => {
     fetchWebshopData();
     fetchPartners();
     fetchAvailableTeachers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webshopId]);
 
   const fetchWebshopData = async () => {
@@ -47,10 +46,8 @@ const ManagePartners = () => {
       console.log('👥 Partners type:', typeof response.data);
       console.log('👥 Is array?', Array.isArray(response.data));
       
-      // Alapértelmezett üres tömb ha nincs adat
       const partnersData = response.data || [];
       
-      // Ha nem tömb, próbáljuk tömbbé alakítani
       const partnersArray = Array.isArray(partnersData) ? partnersData : [];
       
       console.log('👥 Final partners array:', partnersArray);
@@ -110,7 +107,7 @@ const ManagePartners = () => {
       console.log('✅ Partner added:', response.data);
       
       setSuccess(t('Partner sikeresen hozzáadva!'));
-      closeAddModal(); // JAVÍTÁS: Modal bezárása és scroll visszaállítása
+      closeAddModal();
       fetchPartners();
       
       setTimeout(() => setSuccess(''), 3000);
@@ -151,10 +148,9 @@ const ManagePartners = () => {
   const closeAddModal = () => {
     setIsAddModalOpen(false);
     setSelectedTeacherId('');
-    document.body.style.overflow = 'unset'; // JAVÍTÁS: Biztosan visszaállítjuk a scroll-t
+    document.body.style.overflow = 'unset';
   };
 
-  // JAVÍTOTT getFilteredTeachers funkció
   const getFilteredTeachers = () => {
     if (!webshop || !Array.isArray(availableTeachers) || !Array.isArray(partners)) {
       console.log('⚠️ Cannot filter teachers - missing data');
@@ -166,9 +162,8 @@ const ManagePartners = () => {
     
     const partnerIds = partners
       .filter(p => p && p.user_id)
-      .map(p => Number(p.user_id)); // Ensure numbers
+      .map(p => Number(p.user_id));
     
-    // Ensure ownerId is a number
     const ownerId = Number(webshop.teacher_id);
     
     console.log('🔍 Filtering teachers:');
@@ -195,13 +190,11 @@ const ManagePartners = () => {
     return filtered;
   };
 
-  // SAFE helper funkció username lekéréshez
   const getUsername = (user) => {
     if (!user) return '?';
     return user.username || user.email || 'Névtelen';
   };
 
-  // SAFE helper funkció email lekéréshez
   const getEmail = (user) => {
     if (!user) return 'N/A';
     return user.email || 'Nincs email';
@@ -252,7 +245,6 @@ const ManagePartners = () => {
         ) : (
           <div className="partners-grid">
             {partners.map((partner, index) => {
-              // Extra védelem minden partner elemre
               if (!partner || !partner.user_id) {
                 console.warn('⚠️ Invalid partner at index', index, partner);
                 return null;
@@ -288,7 +280,6 @@ const ManagePartners = () => {
         )}
       </div>
 
-      {/* Owner információ */}
       {webshop && webshop.teacher && (
         <div className="owner-section">
           <div className="section-header">
@@ -309,7 +300,6 @@ const ManagePartners = () => {
         </div>
       )}
 
-      {/* Partner hozzáadás modal */}
       {isAddModalOpen && (
         <div className="modal-overlay" onClick={closeAddModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

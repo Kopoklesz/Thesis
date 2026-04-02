@@ -30,10 +30,6 @@ import { UserRole } from '../entity/user.entity';
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
-  /**
-   * Termék létrehozása
-   * POST /product
-   */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -65,10 +61,6 @@ export class ProductController {
     }
   }
 
-  /**
-   * Termék lekérése ID alapján
-   * GET /product/:id
-   */
   @Get(':id')
   async getProduct(@Param('id', ParseIntPipe) id: number) {
     try {
@@ -81,10 +73,6 @@ export class ProductController {
     }
   }
 
-  /**
-   * Webshop összes termékének lekérése
-   * GET /product/webshop/:id
-   */
   @Get('webshop/:id')
   async getProductsByWebshop(@Param('id', ParseIntPipe) webshopId: number) {
     try {
@@ -94,10 +82,6 @@ export class ProductController {
     }
   }
 
-  /**
-   * Termék frissítése
-   * PUT /product/:id
-   */
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -122,10 +106,6 @@ export class ProductController {
     }
   }
 
-  /**
-   * Termék törlése
-   * DELETE /product/:id
-   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)

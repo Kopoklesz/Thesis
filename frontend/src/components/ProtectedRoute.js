@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 function ProtectedRoute({ children, allowedRoles = [] }) {
   const { user, loading, isAuthenticated } = useAuth();
 
-  // Betöltés közben ne jelenítsen meg semmit
   if (loading) {
     return (
       <div style={{ 
@@ -21,12 +20,10 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
     );
   }
 
-  // Ha nincs bejelentkezve, irányítsa át a login oldalra
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // Ha van szerepkör megkötés, ellenőrizzük
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     return (
       <div style={{ 
@@ -40,7 +37,6 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
     );
   }
 
-  // Ha minden rendben, jelenítse meg az oldalt
   return children;
 }
 

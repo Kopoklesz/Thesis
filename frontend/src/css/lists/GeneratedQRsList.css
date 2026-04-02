@@ -76,7 +76,6 @@
     align-self: flex-start;
 }
 
-/* Progress Section */
 .progress-section {
     display: flex;
     flex-direction: column;
@@ -182,7 +181,6 @@
     transform: rotate(180deg);
 }
 
-/* Event Details */
 .event-details {
     padding: 24px;
     background: white;
@@ -250,7 +248,6 @@
     box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
 }
 
-/* Activations Section */
 .activations-section {
     margin-top: 20px;
 }
@@ -309,7 +306,6 @@
     font-size: 13px;
 }
 
-/* No Activations */
 .no-activations {
     text-align: center;
     padding: 40px 20px;
@@ -327,7 +323,6 @@
     margin: 0;
 }
 
-/* Loading, Error, Empty States */
 .list-loading {
     display: flex;
     flex-direction: column;

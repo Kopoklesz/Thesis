@@ -1,7 +1,6 @@
 import apiClient from '../config/axios';
 import { API_ENDPOINTS } from '../config/api';
 
-// Token és user mentése localStorage-ba
 const setAuthData = (token, user, rememberMe = false) => {
   if (rememberMe) {
     localStorage.setItem('pannon_shop_token', token);
@@ -12,7 +11,6 @@ const setAuthData = (token, user, rememberMe = false) => {
   }
 };
 
-// Token és user lekérése
 const getAuthData = () => {
   const token = localStorage.getItem('pannon_shop_token') || sessionStorage.getItem('pannon_shop_token');
   const userStr = localStorage.getItem('pannon_shop_user') || sessionStorage.getItem('pannon_shop_user');
@@ -20,7 +18,6 @@ const getAuthData = () => {
   return { token, user };
 };
 
-// Auth adatok törlése
 const clearAuthData = () => {
   localStorage.removeItem('pannon_shop_token');
   localStorage.removeItem('pannon_shop_user');
@@ -29,7 +26,6 @@ const clearAuthData = () => {
   console.log('🧹 Auth data cleared from storage');
 };
 
-// Regisztráció
 const register = async (username, email, password, rememberMe = false) => {
   try {
     const response = await apiClient.post('/auth/register', {
@@ -51,7 +47,6 @@ const register = async (username, email, password, rememberMe = false) => {
   }
 };
 
-// Bejelentkezés
 const login = async (identifier, password, rememberMe = false) => {
   try {
     const response = await apiClient.post('/auth/login', {
@@ -72,7 +67,6 @@ const login = async (identifier, password, rememberMe = false) => {
   }
 };
 
-// Kijelentkezés
 const logout = async () => {
   try {
     const { token } = getAuthData();
@@ -86,7 +80,6 @@ const logout = async () => {
   }
 };
 
-// Profil lekérése
 const getProfile = async () => {
   try {
     const response = await apiClient.get('/auth/profile');
@@ -98,7 +91,6 @@ const getProfile = async () => {
   }
 };
 
-// Jelszó validáció
 const validatePassword = (password) => {
   const errors = [];
   
@@ -128,14 +120,11 @@ const validatePassword = (password) => {
   };
 };
 
-// Email domain validáció - szinkronizálva a backend-del
 const validateEmailDomain = (email) => {
-  // Admin email engedélyezése
   if (email === 'admin@uni-pannon.hu') {
     return { isValid: true };
   }
 
-  // Csak student és teacher domaineket fogadunk el
   const validDomains = ['@student.uni-pannon.hu', '@teacher.uni-pannon.hu'];
   const isValid = validDomains.some(domain => email.endsWith(domain));
 

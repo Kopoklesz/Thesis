@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Oldal betöltésekor ellenőrizzük van-e mentett token
   useEffect(() => {
     checkAuth();
   }, []);
@@ -28,7 +27,6 @@ export const AuthProvider = ({ children }) => {
     console.log('Saved user:', savedUser);
     
     if (token && savedUser) {
-      // Token validálása a backend-del
       console.log('📡 Validating token with backend...');
       const result = await authService.getProfile();
       
@@ -36,7 +34,6 @@ export const AuthProvider = ({ children }) => {
         console.log('✅ Token valid, user:', result.user);
         setUser(result.user);
       } else {
-        // Token érvénytelen, töröljük
         console.warn('❌ Token invalid, clearing auth data');
         authService.clearAuthData();
         setUser(null);

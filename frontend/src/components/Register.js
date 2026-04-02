@@ -26,7 +26,6 @@ function Register() {
     errors: []
   });
 
-  // Jelszó validáció valós időben
   useEffect(() => {
     if (formData.password) {
       const validation = authService.validatePassword(formData.password);
@@ -43,7 +42,6 @@ function Register() {
       [name]: type === 'checkbox' ? checked : value
     });
     
-    // Hibák törlése amikor a felhasználó változtat
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -55,12 +53,10 @@ function Register() {
   const validateForm = () => {
     const newErrors = {};
 
-    // Felhasználónév - egyszerűsített validáció (bármi lehet)
     if (!formData.username.trim()) {
       newErrors.username = t('A felhasználónév nem lehet üres');
     }
 
-    // Email validáció - csak egyetemi domaineket fogadunk el
     if (!formData.email) {
       newErrors.email = t('Az email cím kötelező');
     } else {
@@ -70,12 +66,10 @@ function Register() {
       }
     }
 
-    // Jelszó validáció
     if (!passwordValidation.isValid) {
       newErrors.password = t('A jelszó nem felel meg a követelményeknek');
     }
 
-    // Jelszó megerősítés
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = t('A jelszavak nem egyeznek');
     }

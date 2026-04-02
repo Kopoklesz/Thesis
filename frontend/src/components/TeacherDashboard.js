@@ -22,7 +22,6 @@ const TeacherDashboard = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Előre definiált Material Design színek
   const presetColors = [
     { name: 'Kék', color: '#2196F3' },
     { name: 'Piros', color: '#F44336' },
@@ -40,13 +39,10 @@ const TeacherDashboard = () => {
 
   useEffect(() => {
     fetchWebshops();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // JAVÍTOTT webshop lekérés partner támogatással
   const fetchWebshops = async () => {
     try {
-      // JAVÍTÁS: Új endpoint használata ami tartalmazza a partner webshopokat is
       const response = await apiClient.get(`${API_URL}/webshop/my-webshops`);
       const userWebshops = Array.isArray(response.data) ? response.data : [];
       
@@ -58,7 +54,6 @@ const TeacherDashboard = () => {
     } catch (error) {
       console.error('Error fetching webshops:', error);
       
-      // Fallback az eredeti endpoint-ra ha az új nem működik
       if (error.response?.status === 404 || error.response?.status === 405) {
         console.log('🔄 Falling back to original endpoint...');
         try {
@@ -68,7 +63,6 @@ const TeacherDashboard = () => {
           if (user?.role === 'admin') {
             setWebshops(allWebshops);
           } else {
-            // Csak a saját webshopokat szűrjük (eredeti logic)
             const myWebshops = allWebshops.filter(shop => shop.teacher_id === user?.user_id);
             setWebshops(myWebshops);
           }
@@ -196,7 +190,6 @@ const TeacherDashboard = () => {
     document.body.style.overflow = 'unset';
   };
 
-  // JAVÍTOTT: Ownership ellenőrzés partner támogatással
   const isWebshopOwner = (webshop) => {
     return webshop.teacher_id === user?.user_id;
   };
@@ -340,7 +333,6 @@ const TeacherDashboard = () => {
               <div key={shop.webshop_id} className="webshop-card">
                 <div className="webshop-card-header" style={{ backgroundColor: shop.header_color_code }}>
                   <h3>{shop.subject_name}</h3>
-                  {/* JAVÍTÁS: Szerepkör megjelenítése */}
                   <span className="webshop-role-badge">
                     {getWebshopRole(shop)}
                   </span>
@@ -384,7 +376,6 @@ const TeacherDashboard = () => {
         )}
       </div>
 
-      {/* Szerkesztés Modal */}
       {isEditModalOpen && editingWebshop && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

@@ -29,7 +29,6 @@
   justify-content: center;
 }
 
-/* Progress Bar */
 .progress-bar {
   display: flex;
   justify-content: space-between;
@@ -98,7 +97,6 @@
   color: #2196F3;
 }
 
-/* Step Container */
 .step-container {
   display: flex;
   flex-direction: column;
@@ -124,7 +122,6 @@
   margin: 0;
 }
 
-/* Webshop Grid */
 .webshop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -186,7 +183,6 @@
   font-weight: 700;
 }
 
-/* Form Group Large */
 .form-group-large {
   display: flex;
   flex-direction: column;
@@ -243,7 +239,6 @@
   text-align: center;
 }
 
-/* Summary Box */
 .summary-box {
   background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
   border-radius: 12px;
@@ -293,7 +288,6 @@
   font-weight: 700;
 }
 
-/* Step Actions */
 .step-actions {
   display: flex;
   gap: 16px;
@@ -353,7 +347,6 @@
   transform: none;
 }
 
-/* No Webshops */
 .no-webshops {
   text-align: center;
   padding: 60px 20px;
@@ -366,7 +359,6 @@
   margin-bottom: 16px;
 }
 
-/* Separator */
 .separator {
   display: flex;
   align-items: center;

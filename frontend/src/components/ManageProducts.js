@@ -6,16 +6,10 @@ import apiClient from '../config/axios';
 import { API_URL } from '../config/api';
 import '../css/ManageProducts.css';
 
-// Adatbázis korlátok a migrációból:
-// - name: VARCHAR(255)
-// - category: VARCHAR(100)
-// - image: VARCHAR(255) - FONTOS: Rövid URL-t használj!
-// - description: TEXT (korlátlan)
-
 const MAX_NAME_LENGTH = 255;
 const MAX_CATEGORY_LENGTH = 100;
-const MAX_IMAGE_URL_LENGTH = 255; // VARCHAR(255) - adatbázis korlát!
-const MAX_DESCRIPTION_LENGTH = 5000; // TEXT típus - ajánlott maximum
+const MAX_IMAGE_URL_LENGTH = 255;
+const MAX_DESCRIPTION_LENGTH = 5000;
 
 const ManageProducts = () => {
   const { t } = useTranslation();
@@ -43,7 +37,6 @@ const ManageProducts = () => {
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Karakter számláló state-ek
   const [nameLength, setNameLength] = useState(0);
   const [categoryLength, setCategoryLength] = useState(0);
   const [imageUrlLength, setImageUrlLength] = useState(0);
@@ -53,10 +46,8 @@ const ManageProducts = () => {
   const [editImageUrlLength, setEditImageUrlLength] = useState(0);
   const [editDescriptionLength, setEditDescriptionLength] = useState(0);
 
-  // Ownership ellenőrzés az oldal betöltésekor
   useEffect(() => {
     checkOwnership();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webshopId, user]);
 
   const checkOwnership = async () => {
@@ -100,7 +91,6 @@ const ManageProducts = () => {
     if (isAuthorized) {
       fetchProducts();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthorized, webshopId]);
 
   const fetchProducts = async () => {
@@ -119,7 +109,6 @@ const ManageProducts = () => {
     if (type === 'new') {
       setNewProduct(prev => ({ ...prev, [name]: value }));
       
-      // Karakter számláló frissítése
       if (name === 'name') {
         setNameLength(value.length);
       } else if (name === 'category') {
@@ -132,7 +121,6 @@ const ManageProducts = () => {
     } else {
       setEditingProduct(prev => ({ ...prev, [name]: value }));
       
-      // Karakter számláló frissítése
       if (name === 'name') {
         setEditNameLength(value.length);
       } else if (name === 'category') {
@@ -304,7 +292,6 @@ const ManageProducts = () => {
     setSuccess('');
   };
 
-  // Karakter számláló megjelenítő komponens
   const CharacterCounter = ({ current, max, warning = 0.8 }) => {
     const isWarning = current > max * warning;
     const isError = current > max;
@@ -344,7 +331,6 @@ const ManageProducts = () => {
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">{success}</div>}
 
-      {/* Új termék hozzáadása */}
       <div className="add-product-form">
         <h2>{t('Új termék hozzáadása')}</h2>
         <form onSubmit={handleCreateProduct}>
@@ -444,7 +430,6 @@ const ManageProducts = () => {
         </form>
       </div>
 
-      {/* Meglévő termékek */}
       <div className="products-section">
         <h2>{t('Meglévő termékek')}</h2>
         {products.length === 0 ? (
@@ -478,7 +463,6 @@ const ManageProducts = () => {
         )}
       </div>
 
-      {/* Szerkesztési modal */}
       {isEditModalOpen && editingProduct && (
         <div className="edit-modal" onClick={closeEditModal}>
           <div className="edit-modal-content" onClick={(e) => e.stopPropagation()}>

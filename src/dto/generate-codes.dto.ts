@@ -15,5 +15,5 @@ export class GenerateCodesDto {
     codeValue: number;
 
     @IsDateString()
-    expiryDate: string; // ISO format: YYYY-MM-DD
+    expiryDate: string;
 }

@@ -4,7 +4,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
     name = 'CombinedMigration1727512345678'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        // Enum típusok létrehozása, ha még nem léteznek
         await queryRunner.query(`
             DO $$
             BEGIN
@@ -21,7 +20,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             $$;
         `);
 
-        // USER tábla - kibővítve username és password mezőkkel, valamint comment-ekkel
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "user" (
                 "user_id" SERIAL PRIMARY KEY,
@@ -33,7 +31,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             )
         `);
 
-        // Comment-ek hozzáadása a user tábla oszlopaihoz
         await queryRunner.query(`
             COMMENT ON COLUMN "user"."username" IS 'Neptune kód (pl. HMF6XL)'
         `);
@@ -50,7 +47,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             COMMENT ON COLUMN "user"."created_at" IS 'Regisztráció időpontja'
         `);
 
-        // WEBSHOP tábla
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "webshop" (
                 "webshop_id" SERIAL PRIMARY KEY,
@@ -66,7 +62,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             )
         `);
 
-        // USER_BALANCE tábla
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "user_balance" (
                 "balance_id" SERIAL PRIMARY KEY,
@@ -79,7 +74,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             )
         `);
 
-        // PRODUCT tábla
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "product" (
                 "product_id" SERIAL PRIMARY KEY,
@@ -97,8 +91,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
                 CONSTRAINT "chk_product_stock" CHECK (current_stock >= 0 AND current_stock <= max_stock)
             )
         `);
-
-        // CART tábla
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "cart" (
                 "cart_id" SERIAL PRIMARY KEY,
@@ -110,7 +102,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             )
         `);
 
-        // CART_ITEM tábla
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "cart_item" (
                 "cart_item_id" SERIAL PRIMARY KEY,
@@ -123,7 +114,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             )
         `);
 
-        // PURCHASE tábla
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "purchase" (
                 "purchase_id" SERIAL PRIMARY KEY,
@@ -137,7 +127,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             )
         `);
 
-        // Indexek létrehozása
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_user_email" ON "user" ("email")`);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_user_username" ON "user" ("username")`);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_webshop_teacher" ON "webshop" ("teacher_id")`);
@@ -151,10 +140,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_purchase_user" ON "purchase" ("user_id")`);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_purchase_product" ON "purchase" ("product_id")`);
 
-        // Teszt felhasználók beszúrása (jelszavak: bcrypt hash-elt formában)
-        // Jelszó hash generálás: bcrypt.hashSync('password', 10)
-        // admin jelszó: $2b$10$K6yV.eL8L5YLFzj1q9qNLuXKXfTtV.M8.U2V8V8V8V8V8V8V8V8Ve (placeholder)
-
         await queryRunner.query(`
             INSERT INTO "user" (username, email, password, role) VALUES
             ('admin', 'admin@admin.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
@@ -163,20 +148,16 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             ON CONFLICT (username) DO NOTHING
         `);
 
-        // Ellenőrizzük, hogy a webshop_id=0 globális webshop már létezik-e
         const webshopExists = await queryRunner.query(`
             SELECT COUNT(*) FROM "webshop" WHERE webshop_id = 0
         `);
 
-        // Ha még nem létezik, beszúrjuk és igazítjuk a szekvenciát
         if (webshopExists[0].count === '0') {
-            // Módosítjuk a sorozatot, hogy a 0-t is elfogadja
             await queryRunner.query(`
                 ALTER SEQUENCE webshop_webshop_id_seq MINVALUE 0 START WITH 0;
                 SELECT setval('webshop_webshop_id_seq', 0, false);
             `);
 
-            // Alapértelmezett globális webshop beszúrása (admin felhasználó teacher_id-jával)
             const adminUser = await queryRunner.query(`
                 SELECT user_id FROM "user" WHERE username = 'admin' LIMIT 1
             `);
@@ -189,12 +170,10 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             }
         }
 
-        // Beállítjuk a szekvenciát újra a megfelelő értékre
         await queryRunner.query(`
             SELECT setval('webshop_webshop_id_seq', (SELECT COALESCE(MAX(webshop_id), 0) FROM "webshop"), true);
         `);
 
-        // Minden létező felhasználóhoz hozzáadjuk a globális webshop egyenleget
         await queryRunner.query(`
             INSERT INTO user_balance (user_id, webshop_id, amount)
             SELECT u.user_id, 0, 100.00
@@ -208,7 +187,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         try {
-            // Táblák törlése fordított sorrendben a függőségek miatt
             await queryRunner.query(`DROP TABLE IF EXISTS "purchase" CASCADE`);
             await queryRunner.query(`DROP TABLE IF EXISTS "cart_item" CASCADE`);
             await queryRunner.query(`DROP TABLE IF EXISTS "cart" CASCADE`);
@@ -217,7 +195,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
             await queryRunner.query(`DROP TABLE IF EXISTS "webshop" CASCADE`);
             await queryRunner.query(`DROP TABLE IF EXISTS "user" CASCADE`);
 
-            // Enum típusok törlése
             await queryRunner.query(`DROP TYPE IF EXISTS "public"."product_status" CASCADE`);
             await queryRunner.query(`DROP TYPE IF EXISTS "public"."webshop_status" CASCADE`);
             await queryRunner.query(`DROP TYPE IF EXISTS "public"."user_role" CASCADE`);

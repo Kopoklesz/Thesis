@@ -66,7 +66,6 @@
     border-radius: 20px;
 }
 
-/* Webshop Selector */
 .webshop-selector {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -128,7 +127,6 @@
     font-weight: 700;
 }
 
-/* Amount Input */
 .amount-input-group {
     display: flex;
     align-items: center;
@@ -162,7 +160,6 @@
     white-space: nowrap;
 }
 
-/* Search Box */
 .search-box {
     position: relative;
     margin-bottom: 16px;
@@ -192,7 +189,6 @@
     box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.1);
 }
 
-/* Select All */
 .select-all-container {
     margin-bottom: 16px;
 }
@@ -214,7 +210,6 @@
     color: white;
 }
 
-/* Students List */
 .students-list {
     display: flex;
     flex-direction: column;
@@ -302,7 +297,6 @@
     color: #666;
 }
 
-/* No Results */
 .no-results,
 .no-webshops {
     text-align: center;
@@ -316,7 +310,6 @@
     margin-bottom: 12px;
 }
 
-/* Summary Section */
 .summary-section {
     background: linear-gradient(135deg, #e3f2fd, #bbdefb);
 }

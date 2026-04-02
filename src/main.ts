@@ -6,12 +6,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
 
-  // CORS beállítás - production és development környezet támogatása
   app.enableCors({
     origin: [
-      'https://pannon-shop.hu',
-      'https://api.pannon-shop.hu',
-      'http://localhost:3000' // Development frontend
+      'https://empty.hu',
+      'https://empty.api.hu',
+      'http://localhost:3000'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,

@@ -1,10 +1,9 @@
 import { IsNotEmpty, IsEmail, IsString, Matches, MinLength } from 'class-validator';
 
-// Regisztrációs DTO
 export class RegisterDto {
   @IsNotEmpty({ message: 'A felhasználónév megadása kötelező' })
   @IsString()
-  username: string; // MÓDOSÍTVA: Bármi lehet, nincs hossz megkötés
+  username: string;
 
   @IsNotEmpty({ message: 'Az email cím megadása kötelező' })
   @IsEmail({}, { message: 'Érvényes email címet adj meg' })
@@ -12,7 +11,7 @@ export class RegisterDto {
     /@(student|teacher)\.uni-pannon\.hu$|^admin@uni-pannon\.hu$/,
     { message: 'Csak @student.uni-pannon.hu vagy @teacher.uni-pannon.hu email címmel lehet regisztrálni' }
   )
-  email: string; // MÓDOSÍTVA: Csak egyetemi domaineket fogadunk el
+  email: string;
 
   @IsNotEmpty({ message: 'A jelszó megadása kötelező' })
   @IsString()
@@ -20,18 +19,16 @@ export class RegisterDto {
   password: string;
 }
 
-// Bejelentkezési DTO
 export class LoginDto {
   @IsNotEmpty({ message: 'A felhasználónév vagy email megadása kötelező' })
   @IsString()
-  identifier: string; // lehet username vagy email
+  identifier: string;
 
   @IsNotEmpty({ message: 'A jelszó megadása kötelező' })
   @IsString()
   password: string;
 }
 
-// Felhasználó létrehozási DTO (belső használatra)
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
@@ -48,7 +45,6 @@ export class CreateUserDto {
   role?: 'student' | 'teacher' | 'admin';
 }
 
-// Jelszó változtatási DTO
 export class ChangePasswordDto {
   @IsNotEmpty({ message: 'A jelenlegi jelszó megadása kötelező' })
   @IsString()
@@ -59,7 +55,6 @@ export class ChangePasswordDto {
   newPassword: string;
 }
 
-// Felhasználói válasz DTO (jelszó nélkül)
 export class UserResponseDto {
   user_id: number;
   username: string;
@@ -68,15 +63,13 @@ export class UserResponseDto {
   created_at: Date;
 }
 
-// JWT payload interface
 export interface JwtPayload {
-  sub: number; // user_id
+  sub: number; 
   username: string;
   email: string;
   role: 'student' | 'teacher' | 'admin';
 }
 
-// Bejelentkezési válasz DTO
 export class LoginResponseDto {
   access_token: string;
   user: UserResponseDto;

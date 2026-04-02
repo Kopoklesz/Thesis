@@ -252,7 +252,6 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* JAVÍTÁS: Szerepkör badge a webshop kártyán */
 .webshop-role-badge {
   position: absolute;
   top: 12px;
@@ -310,7 +309,6 @@
   color: #c62828;
 }
 
-/* JAVÍTOTT webshop-actions CSS */
 .webshop-actions {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -513,7 +511,6 @@
     min-width: auto;
   }
 
-  /* Mobile layout: stack buttons vertically */
   .webshop-actions {
     grid-template-columns: 1fr;
     gap: 8px;

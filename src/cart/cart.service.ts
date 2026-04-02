@@ -14,16 +14,12 @@ export class CartService {
     private cartItemRepository: Repository<CartItem>,
   ) { }
 
-  /**
-   * Kosár lekérése
-   */
   async getCart(userId: number, webshopId: number): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { user: { user_id: userId }, webshop: { webshop_id: webshopId } },
       relations: ['items', 'items.product', 'items.product.webshop'],
     });
 
-    // Ha nincs kosár, létrehozzuk
     if (!cart) {
       cart = this.cartRepository.create({
         user: { user_id: userId },
@@ -36,9 +32,6 @@ export class CartService {
     return cart;
   }
 
-  /**
-   * Termék hozzáadása a kosárhoz
-   */
   async addToCart(userId: number, webshopId: number, addToCartDto: AddToCartDto): Promise<Cart> {
     const { productId, quantity } = addToCartDto;
 
@@ -46,7 +39,6 @@ export class CartService {
       throw new BadRequestException('A mennyiség nem lehet negatív');
     }
 
-    // Kosár lekérése vagy létrehozása
     let cart = await this.cartRepository.findOne({
       where: { user: { user_id: userId }, webshop: { webshop_id: webshopId } },
       relations: ['items', 'items.product'],
@@ -60,7 +52,6 @@ export class CartService {
       cart = await this.cartRepository.save(cart);
     }
 
-    // Meglévő cart item keresése
     const existingCartItem = await this.cartItemRepository.findOne({
       where: {
         cart: { cart_id: cart.cart_id },
@@ -69,17 +60,14 @@ export class CartService {
     });
 
     if (quantity === 0) {
-      // Ha a mennyiség 0, töröljük a terméket
       if (existingCartItem) {
         await this.cartItemRepository.remove(existingCartItem);
       }
     } else {
       if (existingCartItem) {
-        // Meglévő item frissítése
         existingCartItem.quantity = quantity;
         await this.cartItemRepository.save(existingCartItem);
       } else {
-        // Új item létrehozása
         const newCartItem = this.cartItemRepository.create({
           cart: cart,
           product: { product_id: productId },
@@ -92,9 +80,6 @@ export class CartService {
     return this.getCart(userId, webshopId);
   }
 
-  /**
-   * Kosár ürítése vásárlás után
-   */
   async clearCart(userId: number, webshopId: number): Promise<void> {
     const cart = await this.cartRepository.findOne({
       where: { user: { user_id: userId }, webshop: { webshop_id: webshopId } },
@@ -102,22 +87,15 @@ export class CartService {
     });
 
     if (cart && cart.items && cart.items.length > 0) {
-      // Összes cart item törlése
       await this.cartItemRepository.remove(cart.items);
     }
   }
 
-  /**
-   * Kosár tételszám lekérése
-   */
   async getCartItemCount(userId: number, webshopId: number): Promise<number> {
     const cart = await this.getCart(userId, webshopId);
     return cart.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
   }
 
-  /**
-   * Kosár összértéke
-   */
   async getCartTotal(userId: number, webshopId: number): Promise<number> {
     const cart = await this.getCart(userId, webshopId);
     return cart.items?.reduce((sum, item) =>

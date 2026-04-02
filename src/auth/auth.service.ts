@@ -18,21 +18,16 @@ export class AuthService {
   async register(registerDto: RegisterDto): Promise<LoginResponseDto> {
     const { username, email, password } = registerDto;
 
-    // ELTÁVOLÍTVA: Neptune kód validáció (username már bármi lehet)
-
-    // Email domain validáció
     const emailValidation = this.passwordService.validateEmailDomain(email);
     if (!emailValidation.isValid) {
       throw new BadRequestException(emailValidation.error);
     }
 
-    // Jelszó komplexitás validáció
     const passwordValidation = this.passwordService.validatePasswordComplexity(password);
     if (!passwordValidation.isValid) {
       throw new BadRequestException(passwordValidation.errors.join(', '));
     }
 
-    // Létező felhasználó ellenőrzése
     const existingUser = await this.userRepository.findOne({
       where: [{ username }, { email }]
     });
@@ -46,11 +41,9 @@ export class AuthService {
       }
     }
 
-    // Szerepkör meghatározása email alapján
     const role = this.passwordService.determineRoleFromEmail(email);
     const hashedPassword = await this.passwordService.hashPassword(password);
 
-    // Új felhasználó létrehozása
     const newUser = this.userRepository.create({
       username,
       email,

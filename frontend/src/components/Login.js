@@ -24,7 +24,7 @@ function Login() {
       ...formData,
       [name]: type === 'checkbox' ? checked : value
     });
-    setError(''); // Hiba törlése begépelésnél
+    setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -32,18 +32,15 @@ function Login() {
     setError('');
     setLoading(true);
 
-    // Validáció
     if (!formData.identifier || !formData.password) {
       setError('Minden mező kitöltése kötelező');
       setLoading(false);
       return;
     }
 
-    // Bejelentkezés
     const result = await login(formData.identifier, formData.password, formData.rememberMe);
 
     if (result.success) {
-      // Sikeres bejelentkezés - átirányítás
       navigate('/webshops');
     } else {
       setError(result.error);

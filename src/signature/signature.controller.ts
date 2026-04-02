@@ -27,7 +27,6 @@ import { UserRole } from '../entity/user.entity';
 export class SignatureController {
     constructor(private readonly signatureService: SignatureService) { }
 
-    // ==================== GENERÁLÁS ====================
 
     @Post('generate-codes')
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -36,7 +35,6 @@ export class SignatureController {
         const userId = req.user.userId;
         const result = await this.signatureService.generateCodes(userId, dto);
 
-        // PDF visszaadása letöltésre
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="codes_${result.eventId}.pdf"`);
         res.send(result.pdfBuffer);
@@ -49,7 +47,6 @@ export class SignatureController {
         const userId = req.user.userId;
         const result = await this.signatureService.generateQR(userId, dto);
 
-        // PNG visszaadása letöltésre
         res.setHeader('Content-Type', 'image/png');
         res.setHeader('Content-Disposition', `attachment; filename="qr_${result.qrId}.png"`);
         res.send(result.pngBuffer);
@@ -63,7 +60,6 @@ export class SignatureController {
         return this.signatureService.addBalanceDirect(userId, dto);
     }
 
-    // ==================== BEVÁLTÁS ====================
 
     @Post('redeem-code')
     @UseGuards(JwtAuthGuard)
@@ -79,7 +75,6 @@ export class SignatureController {
         return this.signatureService.redeemQR(userId, dto);
     }
 
-    // ==================== LEKÉRDEZÉSEK ====================
 
     @Get('my-codes')
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -106,7 +101,6 @@ export class SignatureController {
         return this.signatureService.getAllStudents();
     }
 
-    // ==================== TÖRLÉS ====================
 
     @Delete('code/:codeId')
     @UseGuards(JwtAuthGuard, RolesGuard)

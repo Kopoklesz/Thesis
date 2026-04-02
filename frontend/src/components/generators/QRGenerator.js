@@ -19,7 +19,6 @@ export default function QRGenerator({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [refreshList, setRefreshList] = useState(0);
 
-  // Minimum dátum beállítása holnapra
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split('T')[0];
@@ -120,7 +119,6 @@ export default function QRGenerator({ onSuccess }) {
         }
       );
 
-      // PNG letöltés
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -132,7 +130,6 @@ export default function QRGenerator({ onSuccess }) {
 
       onSuccess(t('QR kód sikeresen generálva és letöltve!'));
       
-      // Reset form
       setFormData({
         webshop: null,
         maxActivations: 50,

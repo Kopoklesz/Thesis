@@ -28,10 +28,6 @@ import { UserRole } from '../entity/user.entity';
 export class WebshopController {
   constructor(private readonly webshopService: WebshopService) { }
 
-  /**
-   * Összes webshop listázása (publikus)
-   * GET /webshop
-   */
   @Get()
   async getAllWebshops() {
     try {
@@ -41,10 +37,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Tanár saját webshopjainak lekérése (tulajdonos + partner)
-   * GET /webshop/my-webshops
-   */
   @Get('my-webshops')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -59,12 +51,10 @@ export class WebshopController {
         throw new HttpException('Teacher ID not found in JWT token', HttpStatus.BAD_REQUEST);
       }
 
-      // Admin esetén az összes webshopot visszaadjuk
       if (userRole === UserRole.ADMIN) {
         return await this.webshopService.getAllWebshops();
       }
 
-      // Tanár esetén a saját + partner webshopokat
       return await this.webshopService.getWebshopsForTeacher(teacherId);
     } catch (error) {
       console.error('❌ Error fetching my webshops:', error);
@@ -72,10 +62,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Új webshop létrehozása (csak TEACHER és ADMIN)
-   * POST /webshop
-   */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -91,7 +77,6 @@ export class WebshopController {
       console.log('req.user.user_id:', req.user?.user_id);
       console.log('req.user.id:', req.user?.id);
 
-      // Próbáljuk megtalálni a user_id-t különböző mezőkből
       const teacherId = req.user?.sub || req.user?.userId || req.user?.user_id || req.user?.id;
       const userRole = req.user?.role;
 
@@ -117,10 +102,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Egy webshop lekérése ID alapján
-   * GET /webshop/:id
-   */
   @Get(':id')
   async getWebshop(@Param('id', ParseIntPipe) id: number) {
     try {
@@ -133,10 +114,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Webshop kategóriáinak lekérése
-   * GET /webshop/:id/categories
-   */
   @Get(':id/categories')
   async getCategories(@Param('id', ParseIntPipe) webshopId: number) {
     try {
@@ -146,10 +123,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Webshop módosítása (csak TEACHER [owner] és ADMIN)
-   * PUT /webshop/:id
-   */
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -170,10 +143,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Webshop törlése (csak TEACHER [owner] és ADMIN)
-   * DELETE /webshop/:id
-   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -193,10 +162,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Partner hozzáadása webshophoz (csak TEACHER [owner] és ADMIN)
-   * POST /webshop/:id/partners
-   */
   @Post(':id/partners')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -224,10 +189,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Partner eltávolítása webshopból (csak TEACHER [owner] és ADMIN)
-   * DELETE /webshop/:id/partners/:partnerId
-   */
   @Delete(':id/partners/:partnerId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -253,10 +214,6 @@ export class WebshopController {
     }
   }
 
-  /**
-   * Webshop partnereinek lekérése (csak TEACHER [owner/partner] és ADMIN)
-   * GET /webshop/:id/partners
-   */
   @Get(':id/partners')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)

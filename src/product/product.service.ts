@@ -19,9 +19,6 @@ export class ProductService {
     private webshopPartnerRepository: Repository<WebshopPartner>,
   ) { }
 
-  /**
-   * Termék létrehozása ownership/partner ellenőrzéssel
-   */
   async createProduct(
     userId: number,
     userRole: UserRole,
@@ -29,7 +26,6 @@ export class ProductService {
   ): Promise<Product> {
     const { webshop_id, name, category, image, description, price, max_stock, current_stock, status } = createProductDto;
 
-    // Webshop létezésének ellenőrzése
     const webshop = await this.webshopRepository.findOne({
       where: { webshop_id: webshop_id },
     });
@@ -44,15 +40,12 @@ export class ProductService {
     console.log('Webshop teacher_id (owner):', webshop.teacher_id, 'Type:', typeof webshop.teacher_id);
     console.log('======================================');
 
-    // Access ellenőrzés - owner, partner vagy admin létrehozhat terméket
     await this.checkWebshopAccess(webshop_id, userId, userRole, 'create product');
 
-    // Validációk
     if (current_stock > max_stock) {
       throw new BadRequestException('A jelenlegi készlet nem lehet nagyobb, mint a maximális készlet');
     }
 
-    // Termék létrehozása
     const newProduct = this.productRepository.create({
       name,
       category,
@@ -68,9 +61,6 @@ export class ProductService {
     return await this.productRepository.save(newProduct);
   }
 
-  /**
-   * Termék módosítása ownership/partner ellenőrzéssel
-   */
   async updateProduct(
     userId: number,
     userRole: UserRole,
@@ -86,10 +76,8 @@ export class ProductService {
       throw new NotFoundException(`Product with ID ${productId} not found`);
     }
 
-    // Access ellenőrzés - owner, partner vagy admin módosíthat terméket
     await this.checkWebshopAccess(product.webshop.webshop_id, userId, userRole, 'update product');
 
-    // Validáció: current_stock <= max_stock
     const newMaxStock = updateProductDto.max_stock ?? product.max_stock;
     const newCurrentStock = updateProductDto.current_stock ?? product.current_stock;
 
@@ -97,15 +85,11 @@ export class ProductService {
       throw new BadRequestException('A jelenlegi készlet nem lehet nagyobb, mint a maximális készlet');
     }
 
-    // Módosítások alkalmazása
     Object.assign(product, updateProductDto);
 
     return await this.productRepository.save(product);
   }
 
-  /**
-   * Termék törlése ownership/partner ellenőrzéssel
-   */
   async deleteProduct(
     userId: number,
     userRole: UserRole,
@@ -120,7 +104,6 @@ export class ProductService {
       throw new NotFoundException(`Product with ID ${productId} not found`);
     }
 
-    // Access ellenőrzés - owner, partner vagy admin törölhet terméket
     await this.checkWebshopAccess(product.webshop.webshop_id, userId, userRole, 'delete product');
 
     await this.productRepository.remove(product);
@@ -128,9 +111,6 @@ export class ProductService {
     return { message: 'Termék sikeresen törölve' };
   }
 
-  /**
-   * Egy termék lekérése
-   */
   async getProduct(id: number): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { product_id: id },
@@ -144,9 +124,6 @@ export class ProductService {
     return product;
   }
 
-  /**
-   * Webshop összes termékének lekérése
-   */
   async getProductsByWebshop(webshopId: number): Promise<Product[]> {
     return await this.productRepository.find({
       where: { webshop: { webshop_id: webshopId } },
@@ -155,9 +132,6 @@ export class ProductService {
     });
   }
 
-  /**
-   * Készlet csökkentése vásárlás során
-   */
   async decreaseStock(productId: number, quantity: number): Promise<Product> {
     const product = await this.getProduct(productId);
 
@@ -169,7 +143,6 @@ export class ProductService {
 
     product.current_stock -= quantity;
 
-    // Ha elfogy a készlet, inaktiváljuk
     if (product.current_stock === 0) {
       product.status = 'unavailable';
     }
@@ -177,15 +150,11 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
-  /**
-   * Készlet növelése (pl. visszaküldés esetén)
-   */
   async increaseStock(productId: number, quantity: number): Promise<Product> {
     const product = await this.getProduct(productId);
 
     product.current_stock += quantity;
 
-    // Ha volt készlet, visszaállítjuk elérhetőre
     if (product.current_stock > 0 && product.status === 'unavailable') {
       product.status = 'available';
     }
@@ -193,17 +162,12 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
-  /**
-   * Webshop hozzáférés ellenőrzése (owner, partner vagy admin)
-   * PRIVATE helper metódus
-   */
   private async checkWebshopAccess(
     webshopId: number,
     userId: number,
     userRole: UserRole,
     action: string
   ): Promise<void> {
-    // Admin mindent csinálhat
     if (userRole === UserRole.ADMIN) {
       console.log(`✅ Access granted for ${action}: ADMIN role`);
       return;
@@ -217,13 +181,11 @@ export class ProductService {
       throw new NotFoundException(`Webshop with ID ${webshopId} not found`);
     }
 
-    // Ellenőrizzük, hogy owner-e
     if (webshop.teacher_id === userId) {
       console.log(`✅ Access granted for ${action}: User is OWNER`);
       return;
     }
 
-    // Ellenőrizzük, hogy partner-e
     const isPartner = await this.webshopPartnerRepository.findOne({
       where: {
         webshop_id: webshopId,
@@ -236,15 +198,10 @@ export class ProductService {
       return;
     }
 
-    // Ha sem owner, sem partner, sem admin nem
     console.error(`❌ Access denied for ${action}: User is neither owner, partner, nor admin`);
     throw new ForbiddenException(`Nincs jogosultságod ehhez a művelethez. Csak a webshop tulajdonosa, partnerei vagy admin ${action.includes('create') ? 'hozhat létre' : action.includes('update') ? 'módosíthat' : 'törölhet'} terméket.`);
   }
-
-  /**
-   * DEPRECATED: Régi ownership ellenőrzés - már nem használjuk
-   * Helyette a checkWebshopAccess() metódust használjuk
-   */
+  
   private async checkProductOwnership(
     productId: number,
     userId: number,

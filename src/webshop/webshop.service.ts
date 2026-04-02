@@ -18,20 +18,13 @@ export class WebshopService {
     private webshopPartnerRepository: Repository<WebshopPartner>,
   ) { }
 
-  /**
-   * Összes webshop lekérése (publikus használatra)
-   */
   async getAllWebshops(): Promise<Webshop[]> {
     return await this.webshopRepository.find();
   }
 
-  /**
-   * Tanár által elérhető webshopok lekérése (saját + partner)
-   */
   async getWebshopsForTeacher(teacherId: number): Promise<Webshop[]> {
     console.log('🔍 Getting webshops for teacher:', teacherId);
 
-    // 1. Saját webshopok (owner)
     const ownedWebshops = await this.webshopRepository.find({
       where: { teacher_id: teacherId },
       relations: ['teacher', 'partners', 'partners.partner']
@@ -39,7 +32,6 @@ export class WebshopService {
 
     console.log('📋 Owned webshops:', ownedWebshops.length);
 
-    // 2. Partner webshopok
     const partnerWebshops = await this.webshopRepository
       .createQueryBuilder('webshop')
       .innerJoin('webshop.partners', 'partner')
@@ -51,7 +43,6 @@ export class WebshopService {
 
     console.log('🤝 Partner webshops:', partnerWebshops.length);
 
-    // 3. Kombinálás és duplikátumok eltávolítása
     const allWebshops = [...ownedWebshops];
 
     partnerWebshops.forEach(partnerWebshop => {
@@ -66,11 +57,7 @@ export class WebshopService {
     return allWebshops;
   }
 
-  /**
-   * Új webshop létrehozása teacher_id-vel
-   */
   async createWebshop(teacherId: number, createWebshopDto: CreateWebshopDto): Promise<Webshop> {
-    // Ellenőrizzük, hogy létezik-e a tanár
     const teacher = await this.userRepository.findOne({
       where: { user_id: teacherId }
     });
@@ -82,7 +69,6 @@ export class WebshopService {
 
     console.log(`Teacher found: ID=${teacher.user_id}, username=${teacher.username}, role=${teacher.role}`);
 
-    // Ellenőrizzük, hogy a user tanár vagy admin szerepkörű-e
     if (teacher.role !== UserRole.TEACHER && teacher.role !== UserRole.ADMIN) {
       console.error(`User ${teacherId} is not a teacher or admin. Role: ${teacher.role}`);
       throw new ForbiddenException(`Csak tanár vagy admin hozhat létre webshopot. Jelenlegi szerepkör: ${teacher.role}`);
@@ -113,11 +99,10 @@ export class WebshopService {
     } catch (error) {
       console.error('Database error creating webshop:', error);
 
-      // Részletesebb hibaüzenet az adatbázis hibáknál
-      if (error.code === '23503') { // Foreign key constraint violation
+      if (error.code === '23503') {
         throw new BadRequestException('Adatbázis integritási hiba: A tanár nem található');
       }
-      if (error.code === '23505') { // Unique constraint violation
+      if (error.code === '23505') {
         throw new BadRequestException('Már létezik webshop ezekkel az adatokkal');
       }
 
@@ -125,9 +110,6 @@ export class WebshopService {
     }
   }
 
-  /**
-   * Egy webshop lekérése
-   */
   async getWebshop(id: number): Promise<Webshop> {
     const webshop = await this.webshopRepository.findOne({
       where: { webshop_id: id },
@@ -141,9 +123,6 @@ export class WebshopService {
     return webshop;
   }
 
-  /**
-   * Webshop kategóriák lekérése
-   */
   async getCategories(webshopId: number): Promise<string[]> {
     const webshop = await this.webshopRepository.findOne({
       where: { webshop_id: webshopId },
@@ -161,16 +140,12 @@ export class WebshopService {
     return [...new Set(categories)];
   }
 
-  /**
-   * Webshop módosítása ownership ellenőrzéssel
-   */
   async updateWebshop(
     userId: number,
     userRole: UserRole,
     webshopId: number,
     updateWebshopDto: UpdateWebshopDto
   ): Promise<Webshop> {
-    // Ownership ellenőrzés - csak owner vagy admin módosíthat
     await this.checkOwnership(webshopId, userId, userRole);
 
     const webshop = await this.webshopRepository.findOne({
@@ -186,15 +161,11 @@ export class WebshopService {
     return await this.webshopRepository.save(webshop);
   }
 
-  /**
-   * Webshop törlése ownership ellenőrzéssel
-   */
   async deleteWebshop(
     userId: number,
     userRole: UserRole,
     webshopId: number
   ): Promise<void> {
-    // Ownership ellenőrzés - csak owner vagy admin törölhet
     await this.checkOwnership(webshopId, userId, userRole);
 
     const webshop = await this.webshopRepository.findOne({
@@ -208,19 +179,14 @@ export class WebshopService {
     await this.webshopRepository.remove(webshop);
   }
 
-  /**
-   * Partner hozzáadása webshophoz
-   */
   async addPartnerToWebshop(
     webshopId: number,
     partnerTeacherId: number,
     requestUserId: number,
     requestUserRole: UserRole
   ): Promise<Webshop> {
-    // Ellenőrizzük, hogy a kérést küldő user owner vagy admin
     await this.checkOwnership(webshopId, requestUserId, requestUserRole);
 
-    // Ellenőrizzük, hogy létezik-e a webshop
     const webshop = await this.webshopRepository.findOne({
       where: { webshop_id: webshopId },
       relations: ['partners', 'partners.partner']
@@ -230,7 +196,6 @@ export class WebshopService {
       throw new NotFoundException(`Webshop with ID ${webshopId} not found`);
     }
 
-    // Ellenőrizzük, hogy a partner tanár szerepkörű-e
     const partnerTeacher = await this.userRepository.findOne({
       where: { user_id: partnerTeacherId }
     });
@@ -243,12 +208,10 @@ export class WebshopService {
       throw new BadRequestException('Csak tanár vagy admin szerepkörű felhasználó lehet partner');
     }
 
-    // Ellenőrizzük, hogy a partner nem az owner
     if (webshop.teacher_id === partnerTeacherId) {
       throw new BadRequestException('Az owner nem lehet egyben partner is');
     }
 
-    // Ellenőrizzük, hogy nincs már hozzáadva
     const existingPartner = await this.webshopPartnerRepository.findOne({
       where: {
         webshop_id: webshopId,
@@ -260,7 +223,6 @@ export class WebshopService {
       throw new BadRequestException('Ez a tanár már partner ennél a webshopnál');
     }
 
-    // Partner hozzáadása
     const newPartner = new WebshopPartner();
     newPartner.webshop_id = webshopId;
     newPartner.partner_teacher_id = partnerTeacherId;
@@ -268,26 +230,20 @@ export class WebshopService {
 
     await this.webshopPartnerRepository.save(newPartner);
 
-    // Frissített webshop visszaadása partnerekkel
     return await this.webshopRepository.findOne({
       where: { webshop_id: webshopId },
       relations: ['partners', 'partners.partner']
     });
   }
 
-  /**
-   * Partner eltávolítása webshopból
-   */
   async removePartnerFromWebshop(
     webshopId: number,
     partnerTeacherId: number,
     requestUserId: number,
     requestUserRole: UserRole
   ): Promise<Webshop> {
-    // Ellenőrizzük, hogy a kérést küldő user owner vagy admin
     await this.checkOwnership(webshopId, requestUserId, requestUserRole);
 
-    // Ellenőrizzük, hogy létezik-e a partner kapcsolat
     const partner = await this.webshopPartnerRepository.findOne({
       where: {
         webshop_id: webshopId,
@@ -299,25 +255,19 @@ export class WebshopService {
       throw new NotFoundException('Ez a tanár nem partner ennél a webshopnál');
     }
 
-    // Partner törlése
     await this.webshopPartnerRepository.remove(partner);
 
-    // Frissített webshop visszaadása partnerekkel
     return await this.webshopRepository.findOne({
       where: { webshop_id: webshopId },
       relations: ['partners', 'partners.partner']
     });
   }
 
-  /**
-   * Webshop partnereinek lekérése (csak owner, partner vagy admin láthatja)
-   */
   async getWebshopPartners(
     webshopId: number,
     requestUserId: number,
     requestUserRole: UserRole
   ): Promise<User[]> {
-    // Ellenőrizzük, hogy a user owner, partner vagy admin-e
     await this.checkWebshopAccess(webshopId, requestUserId, requestUserRole);
 
     const partners = await this.webshopPartnerRepository.find({
@@ -328,15 +278,11 @@ export class WebshopService {
     return partners.map(p => p.partner);
   }
 
-  /**
-   * Webshop hozzáférés ellenőrzése (owner, partner vagy admin)
-   */
   async checkWebshopAccess(
     webshopId: number,
     userId: number,
     userRole: UserRole
   ): Promise<boolean> {
-    // Admin mindent láthat
     if (userRole === UserRole.ADMIN) {
       return true;
     }
@@ -349,12 +295,10 @@ export class WebshopService {
       throw new NotFoundException(`Webshop with ID ${webshopId} not found`);
     }
 
-    // Ellenőrizzük, hogy owner-e
     if (webshop.teacher_id === userId) {
       return true;
     }
 
-    // Ellenőrizzük, hogy partner-e
     const isPartner = await this.webshopPartnerRepository.findOne({
       where: {
         webshop_id: webshopId,
@@ -369,15 +313,11 @@ export class WebshopService {
     throw new ForbiddenException('Nincs jogosultságod ehhez a webshophoz');
   }
 
-  /**
-   * Ownership ellenőrzés - csak owner vagy admin (partner NEM)
-   */
   private async checkOwnership(
     webshopId: number,
     userId: number,
     userRole: UserRole
   ): Promise<void> {
-    // Admin mindent csinálhat
     if (userRole === UserRole.ADMIN) {
       return;
     }
@@ -390,7 +330,6 @@ export class WebshopService {
       throw new NotFoundException(`Webshop with ID ${webshopId} not found`);
     }
 
-    // Teacher csak saját webshopját módosíthatja/törölheti (owner)
     if (webshop.teacher_id !== userId) {
       throw new ForbiddenException('Csak a webshop tulajdonosa vagy admin módosíthatja/törölheti');
     }

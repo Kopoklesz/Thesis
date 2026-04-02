@@ -19,7 +19,6 @@ export default function CodeGenerator({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [refreshList, setRefreshList] = useState(0);
 
-  // Minimum dátum beállítása holnapra
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split('T')[0];

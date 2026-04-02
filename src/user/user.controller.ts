@@ -26,9 +26,6 @@ import { UserRole } from '../entity/user.entity';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  /**
-   * Felhasználó létrehozása (csak admin)
-   */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
@@ -40,18 +37,12 @@ export class UserController {
     }
   }
 
-  /**
-   * Felhasználó lekérése ID alapján
-   */
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   getUser(@Param('id', ParseIntPipe) id: number): Promise<UserResponseDto> {
     return this.userService.getUser(id);
   }
 
-  /**
-   * Összes felhasználó lekérése (csak admin)
-   */
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
@@ -59,9 +50,6 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
-  /**
-   * Felhasználó egyenlegének lekérése
-   */
   @Get(':userId/balance/:webshopId')
   @UseGuards(JwtAuthGuard)
   async getUserBalance(
@@ -72,10 +60,6 @@ export class UserController {
     return { balance };
   }
 
-  /**
-   * Felhasználó egyenlegének módosítása (csak TEACHER [saját webshop] és ADMIN)
-   * PUT /user/:userId/balance/:webshopId
-   */
   @Put(':userId/balance/:webshopId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
@@ -105,9 +89,6 @@ export class UserController {
     }
   }
 
-  /**
-   * Felhasználó összes egyenlegének lekérése
-   */
   @Get(':userId/balances')
   @UseGuards(JwtAuthGuard)
   getUserBalances(@Param('userId', ParseIntPipe) userId: number) {

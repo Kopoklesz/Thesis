@@ -1,10 +1,8 @@
-// 1. Külső könyvtárak
 import React, { useState, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './i18n';
 
-// 2. Komponensek
 import Shop from './components/Shop';
 import Nav from './components/Nav';
 import TeacherDashboard from './components/TeacherDashboard';
@@ -17,10 +15,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// 3. Context
 import { AuthProvider } from './context/AuthContext';
 
-// 4. CSS
 import './App.css';
 
 function App() {
@@ -44,13 +40,11 @@ function App() {
               changeLanguage={changeLanguage}
             />
             <Routes>
-              {/* Publikus útvonalak */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/webshops" element={<WebshopList />} />
               <Route path="/shop/:webshopId" element={<Shop cart={cart} setCart={setCart} />} />
 
-              {/* Védett útvonalak - Tanár/Admin */}
               <Route
                 path="/teacher"
                 element={
@@ -100,7 +94,6 @@ function App() {
                 }
               />
 
-              {/* Védett útvonalak - Diák/Tanár/Admin */}
               <Route
                 path="/cart"
                 element={
@@ -118,7 +111,6 @@ function App() {
                 }
               />
 
-              {/* Átirányítások */}
               <Route path="/" element={<Navigate to="/webshops" replace />} />
               <Route path="*" element={<Navigate to="/webshops" replace />} />
             </Routes>

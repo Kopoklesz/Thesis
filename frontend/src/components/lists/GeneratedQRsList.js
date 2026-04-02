@@ -93,7 +93,7 @@ export default function GeneratedQRsList() {
   return (
     <div className="generated-qrs-list">
       {events.map((event, index) => {
-        const qr = event.qrs[0]; // Egy event-hez egy QR tartozik
+        const qr = event.qrs[0];
         if (!qr) return null;
 
         const expired = isExpired(event.expiryDate);
