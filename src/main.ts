@@ -8,8 +8,8 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'https://empty.hu',
-      'https://empty.api.hu',
+      'https://pannon-shop.hu',
+      'https://www.pannon-shop.hu',
       'http://localhost:3000'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

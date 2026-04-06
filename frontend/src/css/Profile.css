@@ -1,0 +1,191 @@
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.profile-container h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.profile-section {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-section h2 {
+  font-size: 20px;
+  color: #333;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.profile-loading {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+}
+
+.profile-empty {
+  text-align: center;
+  color: #999;
+  padding: 20px 0;
+}
+
+/* Balance Grid */
+.balance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.balance-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.balance-card-header {
+  padding: 12px 16px;
+  color: #fff;
+}
+
+.balance-webshop-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.balance-card-body {
+  padding: 16px;
+  text-align: center;
+}
+
+.balance-amount {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+.balance-currency {
+  font-size: 16px;
+  color: #666;
+  margin-left: 6px;
+}
+
+/* Redeem Form */
+.redeem-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.redeem-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.redeem-form input:focus {
+  border-color: #667eea;
+}
+
+.redeem-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.redeem-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.redeem-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.redeem-message {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.redeem-message.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.redeem-message.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Purchases Table */
+.purchases-table-wrapper {
+  overflow-x: auto;
+}
+
+.purchases-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.purchases-table th,
+.purchases-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.purchases-table th {
+  font-weight: 600;
+  color: #555;
+  background: #fafafa;
+}
+
+.purchases-table td {
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .balance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .redeem-form {
+    flex-direction: column;
+  }
+
+  .redeem-form input,
+  .redeem-btn {
+    width: 100%;
+  }
+
+  .purchases-table th,
+  .purchases-table td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+}

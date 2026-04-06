@@ -34,6 +34,9 @@ export class User {
   })
   role: UserRole;
 
+  @Column({ default: false })
+  is_demo: boolean;
+
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',

@@ -89,6 +89,13 @@ export class UserController {
     }
   }
 
+  @Get('balances/webshop/:webshopId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
+  getWebshopBalances(@Param('webshopId', ParseIntPipe) webshopId: number) {
+    return this.userService.getBalancesByWebshop(webshopId);
+  }
+
   @Get(':userId/balances')
   @UseGuards(JwtAuthGuard)
   getUserBalances(@Param('userId', ParseIntPipe) userId: number) {

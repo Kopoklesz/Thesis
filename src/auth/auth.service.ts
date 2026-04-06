@@ -190,12 +190,28 @@ export class AuthService {
     };
   }
 
+  async toggleDemoMode(userId: number, isDemo: boolean): Promise<UserResponseDto> {
+    const user = await this.userRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Felhasználó nem található');
+    }
+
+    user.is_demo = isDemo;
+    const updatedUser = await this.userRepository.save(user);
+
+    return this.transformToResponseDto(updatedUser);
+  }
+
   private transformToResponseDto(user: User): UserResponseDto {
     return {
       user_id: user.user_id,
       username: user.username,
       email: user.email,
       role: user.role as 'student' | 'teacher' | 'admin',
+      is_demo: user.is_demo,
       created_at: user.created_at,
     };
   }

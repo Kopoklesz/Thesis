@@ -40,6 +40,14 @@ function Nav({ currentLanguage, changeLanguage }) {
           {isAuthenticated && (user.role === 'teacher' || user.role === 'admin') && (
             <li><Link to="/signature-generator">{t('Aláírás generálás')}</Link></li>
           )}
+
+          {isAuthenticated && (
+            <li><Link to="/profile">{t('Profil')}</Link></li>
+          )}
+
+          {isAuthenticated && user.role === 'admin' && (
+            <li><Link to="/admin">{t('Admin')}</Link></li>
+          )}
         </ul>
 
         <div className="auth-section">

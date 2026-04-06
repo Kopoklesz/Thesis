@@ -15,6 +15,7 @@ import { PurchaseService } from './purchase.service';
 import { HttpExceptionFilter } from '../filters/http-exception.filter';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { DemoGuard } from '../auth/guards/demo.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../entity/user.entity';
 
@@ -24,7 +25,7 @@ export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) { }
 
   @Post(':userId/:webshopId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DemoGuard)
   async createPurchase(
     @Request() req,
     @Param('userId', ParseIntPipe) userId: number,

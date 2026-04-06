@@ -272,7 +272,9 @@ export class SignatureService {
         expiryDate: Date,
         maxActivations: number,
     ): Promise<Buffer> {
-        const qrImageUrl = await QRCode.toDataURL(qrData, {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const qrContent = `${frontendUrl}/redeem?qr=${qrData}`;
+        const qrImageUrl = await QRCode.toDataURL(qrContent, {
             width: 400,
             margin: 2,
             color: {
@@ -369,8 +371,8 @@ export class SignatureService {
 
             let balance = await queryRunner.manager.findOne(UserBalance, {
                 where: {
-                    user: { user_id: userId },
-                    webshop: { webshop_id: code.event.webshop_id },
+                    user: { user_id: userId } as User,
+                    webshop: { webshop_id: code.event.webshop_id } as any,
                 },
             });
 
@@ -447,8 +449,8 @@ export class SignatureService {
 
             let balance = await queryRunner.manager.findOne(UserBalance, {
                 where: {
-                    user: { user_id: userId },
-                    webshop: { webshop_id: qr.event.webshop_id },
+                    user: { user_id: userId } as User,
+                    webshop: { webshop_id: qr.event.webshop_id } as any,
                 },
             });
 

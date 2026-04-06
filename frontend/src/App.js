@@ -5,6 +5,7 @@ import './i18n';
 
 import Shop from './components/Shop';
 import Nav from './components/Nav';
+import DemoBanner from './components/DemoBanner';
 import TeacherDashboard from './components/TeacherDashboard';
 import ManagePartners from './components/ManagePartners';
 import Cart from './components/Cart';
@@ -14,6 +15,10 @@ import SignatureGenerated from './components/SignatureGenerated';
 import Login from './components/Login';
 import Register from './components/Register';
 import ProtectedRoute from './components/ProtectedRoute';
+import QRRedeem from './components/QRRedeem';
+import Profile from './components/Profile';
+import WebshopStats from './components/WebshopStats';
+import AdminPanel from './components/AdminPanel';
 
 import { AuthProvider } from './context/AuthContext';
 
@@ -34,12 +39,29 @@ function App() {
       <Router>
         <div className="App">
           <Suspense fallback={<div>Loading...</div>}>
-            <Nav 
-              cart={cart} 
+            <Nav
+              cart={cart}
               currentLanguage={currentLanguage}
               changeLanguage={changeLanguage}
             />
+            <DemoBanner />
             <Routes>
+              <Route path="/redeem" element={<QRRedeem />} />
+              <Route path="/profile" element={
+                <ProtectedRoute allowedRoles={['student', 'teacher', 'admin']}>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/teacher/stats/:webshopId" element={
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
+                  <WebshopStats />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminPanel />
+                </ProtectedRoute>
+              } />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/webshops" element={<WebshopList />} />

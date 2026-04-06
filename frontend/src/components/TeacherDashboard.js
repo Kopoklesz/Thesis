@@ -361,11 +361,19 @@ const TeacherDashboard = () => {
                       {t('Termékek')}
                     </Link>
                     {canEditWebshop(shop) && (
-                      <Link 
-                        to={`/teacher/manage-partners/${shop.webshop_id}`} 
+                      <Link
+                        to={`/teacher/manage-partners/${shop.webshop_id}`}
                         className="manage-btn partners-btn"
                       >
                         {t('Partnerek')}
+                      </Link>
+                    )}
+                    {canEditWebshop(shop) && (
+                      <Link
+                        to={`/teacher/stats/${shop.webshop_id}`}
+                        className="manage-btn stats-btn"
+                      >
+                        {t('Statisztikák')}
                       </Link>
                     )}
                   </div>

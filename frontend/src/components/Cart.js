@@ -167,10 +167,11 @@ const Cart = () => {
           
           <div className="cart-summary">
             <h3>{t('Összesen')}: {calculateTotal()} {cartItems[0]?.product.webshop?.paying_instrument || 'Ft'}</h3>
-            <button 
+            <button
               className="checkout-button"
               onClick={checkout}
-              disabled={processing || cartItems.length === 0}
+              disabled={processing || cartItems.length === 0 || user?.is_demo === true}
+              title={user?.is_demo === true ? t('Demo felhasználóval ez a művelet nem hajtható végre') : ''}
             >
               {processing ? t('Feldolgozás...') : t('Fizetés')}
             </button>

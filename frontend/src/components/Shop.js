@@ -245,13 +245,14 @@ const Shop = () => {
         <div className="product-grid">
           {filteredProducts.length > 0 ? (
             filteredProducts.map(product => (
-              <ProductCard 
-                key={product.product_id} 
-                product={product} 
+              <ProductCard
+                key={product.product_id}
+                product={product}
                 payingInstrument={webshop.paying_instrument}
                 onAddToCart={addToCart}
                 onOpenModal={openProductModal}
                 accentColor={accentColor}
+                isDemo={user?.is_demo === true}
               />
             ))
           ) : (
@@ -264,19 +265,20 @@ const Shop = () => {
       </div>
 
       {isModalOpen && selectedProduct && (
-        <ProductModal 
+        <ProductModal
           product={selectedProduct}
           payingInstrument={webshop.paying_instrument}
           onClose={closeProductModal}
           onAddToCart={addToCart}
           accentColor={accentColor}
+          isDemo={user?.is_demo === true}
         />
       )}
     </div>
   );
 };
 
-const ProductCard = ({ product, payingInstrument, onAddToCart, onOpenModal, accentColor }) => {
+const ProductCard = ({ product, payingInstrument, onAddToCart, onOpenModal, accentColor, isDemo }) => {
   const { t } = useTranslation();
   const [quantity, setQuantity] = useState(0);
 
@@ -361,14 +363,15 @@ const ProductCard = ({ product, payingInstrument, onAddToCart, onOpenModal, acce
             +
           </button>
         </div>
-        <button 
+        <button
           className="add-to-cart-btn"
           style={{ backgroundColor: accentColor }}
           onClick={(e) => {
             e.stopPropagation();
             handleAddToCart();
           }}
-          disabled={quantity === 0}
+          disabled={quantity === 0 || isDemo}
+          title={isDemo ? t('Demo felhasználóval ez a művelet nem hajtható végre') : ''}
         >
           🛒 {t('Kosárba')}
         </button>
@@ -377,7 +380,7 @@ const ProductCard = ({ product, payingInstrument, onAddToCart, onOpenModal, acce
   );
 };
 
-const ProductModal = ({ product, payingInstrument, onClose, onAddToCart, accentColor }) => {
+const ProductModal = ({ product, payingInstrument, onClose, onAddToCart, accentColor, isDemo }) => {
   const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
 
@@ -438,10 +441,12 @@ const ProductModal = ({ product, payingInstrument, onClose, onAddToCart, accentC
                   +
                 </button>
               </div>
-              <button 
+              <button
                 className="modal-add-btn"
                 style={{ backgroundColor: accentColor }}
                 onClick={handleAddToCart}
+                disabled={isDemo}
+                title={isDemo ? t('Demo felhasználóval ez a művelet nem hajtható végre') : ''}
               >
                 🛒 {t('Kosárba')} ({quantity * product.price} {payingInstrument})
               </button>

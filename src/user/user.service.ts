@@ -170,12 +170,27 @@ export class UserService {
     return user ? this.transformToResponseDto(user) : null;
   }
 
+  async getBalancesByWebshop(webshopId: number): Promise<{ username: string; email: string; amount: number }[]> {
+    const balances = await this.userBalanceRepository.find({
+      where: { webshop: { webshop_id: webshopId } },
+      relations: ['user'],
+      order: { amount: 'DESC' },
+    });
+
+    return balances.map(balance => ({
+      username: balance.user.username,
+      email: balance.user.email,
+      amount: Number(balance.amount),
+    }));
+  }
+
   private transformToResponseDto(user: User): UserResponseDto {
     return {
       user_id: user.user_id,
       username: user.username,
       email: user.email,
       role: user.role as 'student' | 'teacher' | 'admin',
+      is_demo: user.is_demo,
       created_at: user.created_at,
     };
   }

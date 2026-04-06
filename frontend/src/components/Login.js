@@ -41,7 +41,13 @@ function Login() {
     const result = await login(formData.identifier, formData.password, formData.rememberMe);
 
     if (result.success) {
-      navigate('/webshops');
+      const redirectUrl = sessionStorage.getItem('pannon_shop_redirect_after_login');
+      if (redirectUrl) {
+        sessionStorage.removeItem('pannon_shop_redirect_after_login');
+        window.location.href = redirectUrl;
+      } else {
+        navigate('/webshops');
+      }
     } else {
       setError(result.error);
     }

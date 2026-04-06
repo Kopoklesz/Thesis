@@ -118,6 +118,30 @@ Hallgató oldalon:
 - QR kód beolvasása (telefonnal)
 - Race condition védelem a párhuzamos beváltás ellen
 
+#### Hallgató profil
+- Egyenleg összesítő webshopok szerinti bontásban
+- Kézi kód beváltás a profiloldalról
+- Vásárlási előzmények megtekintése
+
+#### QR kód deep link
+- A generált QR kódok URL-t tartalmaznak (nem nyers tokent)
+- Telefon natív kamerájával beolvasva automatikusan megnyitja az oldalt
+- Bejelentkezés után automatikusan beváltja a pontokat és visszajelzést ad
+
+#### Oktató webshop statisztika
+- Hallgatói egyenlegek megtekintése webshop alapján (ki mennyit gyűjtött)
+- Vásárlási lista webshop alapján (ki mit vásárolt)
+
+#### Admin panel
+- Felhasználók listázása, keresése és szűrése szerepkör szerint
+- Demo mód be/ki kapcsolása felhasználónként
+- Felhasználó törlése
+
+#### Demo mód
+- Felhasználónként kapcsolható is_demo flag az admin panelről
+- Demo felhasználók minden oldalt és funkciót látnak, de adatot nem módosíthatnak
+- Látható figyelmeztető sáv jelenik meg demo módban
+
 #### Karbantartás
 - Automatikus cleanup task: lejárt kódok és QR-ok deaktiválása
 
@@ -180,7 +204,7 @@ NODE_ENV=development
 - A jelszavak bcrypt-tel kerülnek hash-elésre (10 salt round).
 - A JWT titkos kulcs `.env`-ből olvasódik be — éles környezetben erős, véletlenszerű kulcsot kell megadni.
 - A CORS konfiguráció `main.ts`-ben definiált; éles deploy előtt frissíteni kell a valós domain(ek)re.
-- A `src/auth/strategies/jwt.strategy.ts` tartalmaz egy `|| 'your-secret-key'` fallback értéket — ezt éles deploy előtt el kell távolítani, hogy a `.env` betöltési hibák ne maradjanak csendben.
+
 
 ---
 
@@ -299,6 +323,30 @@ Student side:
 - Scan QR codes (mobile)
 - Race condition protection for concurrent redemptions
 
+#### Student Profile
+- Balance summary broken down by webshop
+- Manual code redemption from the profile page
+- Purchase history view
+
+#### QR Code Deep Link
+- Generated QR codes contain a URL (not a raw token)
+- Scanning with the phone's native camera opens the app automatically
+- After login, points are redeemed automatically with result feedback
+
+#### Teacher Webshop Statistics
+- View student balances per webshop (who collected how much)
+- View purchase list per webshop (who bought what)
+
+#### Admin Panel
+- List, search, and filter users by role
+- Toggle demo mode per user
+- Delete users
+
+#### Demo Mode
+- Per-user is_demo flag controllable from the admin panel
+- Demo users can see all pages and features but cannot modify any data
+- A visible warning banner is shown in demo mode
+
 #### Maintenance
 - Automatic cleanup task: deactivates expired codes and QRs
 
@@ -354,7 +402,7 @@ NODE_ENV=development
 - Passwords are hashed with bcrypt (10 salt rounds).
 - JWT secret is loaded from `.env` — use a strong, random value in production.
 - CORS is configured in `main.ts` — update allowed origins before deploying.
-- There is a `|| 'your-secret-key'` fallback in `jwt.strategy.ts` — remove this before production to avoid silent config failures.
+
 
 ---
 

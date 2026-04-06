@@ -60,6 +60,7 @@ export class UserResponseDto {
   username: string;
   email: string;
   role: 'student' | 'teacher' | 'admin';
+  is_demo: boolean;
   created_at: Date;
 }
 

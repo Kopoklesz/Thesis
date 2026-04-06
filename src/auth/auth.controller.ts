@@ -16,6 +16,7 @@ import {
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { DemoGuard } from './guards/demo.guard';
 import { Roles } from './decorators/roles.decorator';
 import {
   RegisterDto,
@@ -58,7 +59,7 @@ export class AuthController {
   }
 
   @Put('change-password')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DemoGuard)
   async changePassword(
     @Request() req,
     @Body() changePasswordDto: ChangePasswordDto,
@@ -115,5 +116,15 @@ export class AuthController {
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   async getUserById(@Param('id', ParseIntPipe) userId: number): Promise<UserResponseDto> {
     return this.authService.findUserById(userId);
+  }
+
+  @Put('users/:id/demo')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async toggleDemoMode(
+    @Param('id', ParseIntPipe) userId: number,
+    @Body('is_demo') isDemo: boolean,
+  ): Promise<UserResponseDto> {
+    return this.authService.toggleDemoMode(userId, isDemo);
   }
 }

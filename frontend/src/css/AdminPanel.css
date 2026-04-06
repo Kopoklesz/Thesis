@@ -1,0 +1,229 @@
+.admin-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.admin-container h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.admin-loading {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.admin-section {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.admin-section h2 {
+  font-size: 20px;
+  color: #333;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.admin-message {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.admin-message.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.admin-message.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Filters */
+.admin-filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.admin-role-filters {
+  display: flex;
+  gap: 6px;
+}
+
+.role-filter-btn {
+  padding: 6px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.role-filter-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-color: transparent;
+}
+
+.admin-search {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin-search:focus {
+  border-color: #667eea;
+}
+
+/* Table */
+.admin-table-wrapper {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: #555;
+  background: #fafafa;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.role-student {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.role-teacher {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.role-admin {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+/* Demo Toggle Switch */
+.demo-toggle {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.demo-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.demo-toggle-slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #ccc;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.demo-toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.demo-toggle input:checked + .demo-toggle-slider {
+  background: #ff9800;
+}
+
+.demo-toggle input:checked + .demo-toggle-slider::before {
+  transform: translateX(18px);
+}
+
+/* Delete button */
+.delete-user-btn {
+  padding: 5px 12px;
+  border: 1px solid #ef5350;
+  border-radius: 6px;
+  background: #fff;
+  color: #ef5350;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-user-btn:hover:not(:disabled) {
+  background: #ef5350;
+  color: #fff;
+}
+
+.delete-user-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .admin-filters {
+    flex-direction: column;
+  }
+
+  .admin-role-filters {
+    flex-wrap: wrap;
+  }
+
+  .admin-search {
+    width: 100%;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+}

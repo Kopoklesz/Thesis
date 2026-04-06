@@ -14,6 +14,7 @@ import {
 import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { DemoGuard } from '../auth/guards/demo.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { SignatureService } from './signature.service';
 import { GenerateCodesDto } from '../dto/generate-codes.dto';
@@ -62,14 +63,14 @@ export class SignatureController {
 
 
     @Post('redeem-code')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, DemoGuard)
     async redeemCode(@Req() req, @Body() dto: RedeemCodeDto) {
         const userId = req.user.userId;
         return this.signatureService.redeemCode(userId, dto);
     }
 
     @Post('redeem-qr')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, DemoGuard)
     async redeemQR(@Req() req, @Body() dto: RedeemQRDto) {
         const userId = req.user.userId;
         return this.signatureService.redeemQR(userId, dto);

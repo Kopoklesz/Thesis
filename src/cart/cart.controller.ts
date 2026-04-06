@@ -16,6 +16,7 @@ import { CartService } from './cart.service';
 import { HttpExceptionFilter } from '../filters/http-exception.filter';
 import { AddToCartDto } from '../dto/add-to-cart.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { DemoGuard } from '../auth/guards/demo.guard';
 import { UserRole } from '../entity/user.entity';
 
 @Controller('cart')
@@ -38,7 +39,7 @@ export class CartController {
   }
 
   @Post(':userId/:webshopId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DemoGuard)
   async addToCart(
     @Request() req,
     @Param('userId', ParseIntPipe) userId: number,
