@@ -1,4 +1,5 @@
 import { IsOptional, IsString, IsNumber, IsEnum, Min } from 'class-validator';
+import { NoProfanity } from '../common/no-profanity.decorator';
 
 export enum ProductStatus {
   AVAILABLE = 'available',
@@ -8,10 +9,12 @@ export enum ProductStatus {
 export class UpdateProductDto {
   @IsOptional()
   @IsString()
+  @NoProfanity({ message: 'A termék neve nem megengedett kifejezést tartalmaz' })
   name?: string;
 
   @IsOptional()
   @IsString()
+  @NoProfanity({ message: 'A kategória neve nem megengedett kifejezést tartalmaz' })
   category?: string;
 
   @IsOptional()

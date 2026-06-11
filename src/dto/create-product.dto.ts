@@ -1,12 +1,15 @@
 import { IsNotEmpty, IsString, IsNumber, IsPositive, IsUrl, IsEnum } from 'class-validator';
+import { NoProfanity } from '../common/no-profanity.decorator';
 
 export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
+  @NoProfanity({ message: 'A termék neve nem megengedett kifejezést tartalmaz' })
   name: string;
 
   @IsNotEmpty()
   @IsString()
+  @NoProfanity({ message: 'A kategória neve nem megengedett kifejezést tartalmaz' })
   category: string;
 
   @IsNotEmpty()

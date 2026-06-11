@@ -1,8 +1,11 @@
-import { IsNotEmpty, IsEmail, IsString, Matches, MinLength } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, Matches, MinLength, MaxLength } from 'class-validator';
+import { NoProfanity } from '../common/no-profanity.decorator';
 
 export class RegisterDto {
   @IsNotEmpty({ message: 'A felhasználónév megadása kötelező' })
   @IsString()
+  @MaxLength(6, { message: 'A felhasználónév (Neptun-kód) legfeljebb 6 karakter lehet' })
+  @NoProfanity({ message: 'A felhasználónév nem megengedett kifejezést tartalmaz' })
   username: string;
 
   @IsNotEmpty({ message: 'Az email cím megadása kötelező' })
