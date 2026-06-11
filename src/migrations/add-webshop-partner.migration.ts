@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableUnique, TableIndex } from 'typeorm';
 
 export class AddWebshopPartners1730000000000 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {0
+  public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
         name: 'webshop_partner',

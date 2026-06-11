@@ -381,8 +381,8 @@ export class SignatureService {
                 await queryRunner.manager.save(balance);
             } else {
                 balance = queryRunner.manager.create(UserBalance, {
-                    user: { user_id: targetUserId } as User,
-                    webshop: { webshop_id: dto.webshopId } as any,
+                    user: { user_id: userId } as User,
+                    webshop: { webshop_id: code.event.webshop_id } as any,
                     amount: code.event.code_value,
                 });
                 await queryRunner.manager.save(balance);
@@ -459,8 +459,8 @@ export class SignatureService {
                 await queryRunner.manager.save(balance);
             } else {
                 balance = queryRunner.manager.create(UserBalance, {
-                    user: { user_id: targetUserId } as User,
-                    webshop: { webshop_id: dto.webshopId } as any,
+                    user: { user_id: userId } as User,
+                    webshop: { webshop_id: qr.event.webshop_id } as any,
                     amount: qr.event.code_value,
                 });
                 await queryRunner.manager.save(balance);
