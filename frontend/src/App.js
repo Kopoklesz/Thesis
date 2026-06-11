@@ -21,6 +21,7 @@ import WebshopStats from './components/WebshopStats';
 import AdminPanel from './components/AdminPanel';
 
 import { AuthProvider } from './context/AuthContext';
+import { REFERENCE_MODE } from './config/referenceAccounts';
 
 import './App.css';
 
@@ -63,7 +64,10 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route
+                path="/register"
+                element={REFERENCE_MODE ? <Navigate to="/login" replace /> : <Register />}
+              />
               <Route path="/webshops" element={<WebshopList />} />
               <Route path="/shop/:webshopId" element={<Shop cart={cart} setCart={setCart} />} />
 

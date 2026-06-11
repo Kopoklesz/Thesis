@@ -164,7 +164,17 @@ const resources = {
       "Törlés": "Delete",
       "Keresés...": "Search...",
       "Saját fiókot nem törölheted": "You cannot delete your own account",
-      "Webshop": "Webshop"
+      "Webshop": "Webshop",
+      "Ez egy nyilvános referencia példány. Válassz egy minta fiókot a rendszer kipróbálásához.": "This is a public reference instance. Choose a sample account to try the system.",
+      "Minta fiók": "Sample account",
+      "Válassz minta fiókot...": "Select a sample account...",
+      "Válassz egy minta fiókot a bejelentkezéshez": "Select a sample account to log in",
+      "ref_account_admin": "Administrator",
+      "ref_account_teacher1": "Teacher 1",
+      "ref_account_teacher2": "Teacher 2",
+      "ref_account_student1": "Student 1",
+      "ref_account_student2": "Student 2",
+      "A nyilvános referencia verzióban ez a művelet nem érhető el": "This action is not available in the public reference version"
     }
   },
   hu: {
@@ -329,7 +339,17 @@ const resources = {
       "Törlés": "Törlés",
       "Keresés...": "Keresés...",
       "Saját fiókot nem törölheted": "Saját fiókot nem törölheted",
-      "Webshop": "Webshop"
+      "Webshop": "Webshop",
+      "Ez egy nyilvános referencia példány. Válassz egy minta fiókot a rendszer kipróbálásához.": "Ez egy nyilvános referencia példány. Válassz egy minta fiókot a rendszer kipróbálásához.",
+      "Minta fiók": "Minta fiók",
+      "Válassz minta fiókot...": "Válassz minta fiókot...",
+      "Válassz egy minta fiókot a bejelentkezéshez": "Válassz egy minta fiókot a bejelentkezéshez",
+      "ref_account_admin": "Adminisztrátor",
+      "ref_account_teacher1": "Oktató 1",
+      "ref_account_teacher2": "Oktató 2",
+      "ref_account_student1": "Hallgató 1",
+      "ref_account_student2": "Hallgató 2",
+      "A nyilvános referencia verzióban ez a művelet nem érhető el": "A nyilvános referencia verzióban ez a művelet nem érhető el"
     }
   }
 };

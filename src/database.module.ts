@@ -16,7 +16,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
         synchronize: false,
-        migrationsRun: false,
+        // Induláskor lefuttatja a hiányzó migrációkat (séma + referencia seed),
+        // így a Docker Compose-szal felhúzott példány kézi lépés nélkül működik.
+        migrationsRun: true,
       }),
       inject: [ConfigService],
     }),

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { REFERENCE_MODE, REFERENCE_ACCOUNTS, REFERENCE_PASSWORD } from '../config/referenceAccounts';
 import '../css/Auth.css';
 
 function Login() {
@@ -14,6 +15,7 @@ function Login() {
     password: '',
     rememberMe: false
   });
+  const [selectedAccount, setSelectedAccount] = useState('');
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,6 +27,16 @@ function Login() {
       [name]: type === 'checkbox' ? checked : value
     });
     setError('');
+  };
+
+  const handleLoginSuccess = () => {
+    const redirectUrl = sessionStorage.getItem('pannon_shop_redirect_after_login');
+    if (redirectUrl) {
+      sessionStorage.removeItem('pannon_shop_redirect_after_login');
+      window.location.href = redirectUrl;
+    } else {
+      navigate('/webshops');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -41,19 +53,77 @@ function Login() {
     const result = await login(formData.identifier, formData.password, formData.rememberMe);
 
     if (result.success) {
-      const redirectUrl = sessionStorage.getItem('pannon_shop_redirect_after_login');
-      if (redirectUrl) {
-        sessionStorage.removeItem('pannon_shop_redirect_after_login');
-        window.location.href = redirectUrl;
-      } else {
-        navigate('/webshops');
-      }
+      handleLoginSuccess();
     } else {
       setError(result.error);
     }
 
     setLoading(false);
   };
+
+  const handleReferenceSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!selectedAccount) {
+      setError(t('Válassz egy minta fiókot a bejelentkezéshez'));
+      return;
+    }
+
+    setLoading(true);
+    const result = await login(selectedAccount, REFERENCE_PASSWORD, false);
+
+    if (result.success) {
+      handleLoginSuccess();
+    } else {
+      setError(result.error);
+    }
+
+    setLoading(false);
+  };
+
+  if (REFERENCE_MODE) {
+    return (
+      <div className="auth-container">
+        <h2>{t('Bejelentkezés')}</h2>
+
+        <p className="reference-info">
+          {t('Ez egy nyilvános referencia példány. Válassz egy minta fiókot a rendszer kipróbálásához.')}
+        </p>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <form className="auth-form" onSubmit={handleReferenceSubmit}>
+          <div className="form-group">
+            <label htmlFor="referenceAccount">
+              {t('Minta fiók')}
+            </label>
+            <select
+              id="referenceAccount"
+              value={selectedAccount}
+              onChange={(e) => { setSelectedAccount(e.target.value); setError(''); }}
+              disabled={loading}
+            >
+              <option value="">{t('Válassz minta fiókot...')}</option>
+              {REFERENCE_ACCOUNTS.map((account) => (
+                <option key={account.username} value={account.username}>
+                  {t(account.labelKey)} ({account.username})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? t('Bejelentkezés...') : t('Bejelentkezés')}
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-container">
@@ -106,8 +176,8 @@ function Login() {
           </label>
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="auth-button"
           disabled={loading}
         >

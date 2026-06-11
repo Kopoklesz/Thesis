@@ -1,34 +1,37 @@
 ### Alap health check
 GET http://localhost:3001
 
-### Admin bejelentkezés
+### Referencia mód állapota
+GET http://localhost:3001/auth/reference-mode
+
+### Admin bejelentkezés (minta fiók)
 POST http://localhost:3001/auth/login
 Content-Type: application/json
 
 {
   "identifier": "admin",
-  "password": "admin"
+  "password": "PannonDemo1."
 }
 
-### Diák bejelentkezés
+### Hallgató bejelentkezés (minta fiók: DIAK01 vagy DIAK02)
 POST http://localhost:3001/auth/login
 Content-Type: application/json
 
 {
-  "identifier": "diak", 
-  "password": "diak"
+  "identifier": "DIAK01",
+  "password": "PannonDemo1."
 }
 
-### Tanár bejelentkezés
+### Oktató bejelentkezés (minta fiók: TANAR1 vagy TANAR2)
 POST http://localhost:3001/auth/login
 Content-Type: application/json
 
 {
-  "identifier": "tanar",
-  "password": "tanar"
+  "identifier": "TANAR1",
+  "password": "PannonDemo1."
 }
 
-### Új felhasználó regisztráció
+### Új felhasználó regisztráció (csak REFERENCE_MODE=false esetén)
 POST http://localhost:3001/auth/register
 Content-Type: application/json
 

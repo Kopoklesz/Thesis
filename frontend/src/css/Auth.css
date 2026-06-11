@@ -32,7 +32,8 @@
   font-size: 14px;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -40,11 +41,23 @@
   font-size: 16px;
   box-sizing: border-box;
   transition: border-color 0.3s;
+  background-color: #fff;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   outline: none;
   border-color: #04b0b8;
+}
+
+.reference-info {
+  background-color: #e8f6f7;
+  border: 1px solid #04b0b8;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 14px;
+  color: #045d61;
+  margin-bottom: 20px;
 }
 
 .password-requirements {

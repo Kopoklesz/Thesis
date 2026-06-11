@@ -139,50 +139,6 @@ export class CombinedMigration1727512345678 implements MigrationInterface {
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_cart_item_product" ON "cart_item" ("product_id")`);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_purchase_user" ON "purchase" ("user_id")`);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_purchase_product" ON "purchase" ("product_id")`);
-
-        await queryRunner.query(`
-            INSERT INTO "user" (username, email, password, role) VALUES
-            ('admin', 'admin@admin.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
-            ('diak', 'diak@student.uni-pannon.hu', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student'),
-            ('tanar', 'tanar@teacher.uni-pannon.hu', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'teacher')
-            ON CONFLICT (username) DO NOTHING
-        `);
-
-        const webshopExists = await queryRunner.query(`
-            SELECT COUNT(*) FROM "webshop" WHERE webshop_id = 0
-        `);
-
-        if (webshopExists[0].count === '0') {
-            await queryRunner.query(`
-                ALTER SEQUENCE webshop_webshop_id_seq MINVALUE 0 START WITH 0;
-                SELECT setval('webshop_webshop_id_seq', 0, false);
-            `);
-
-            const adminUser = await queryRunner.query(`
-                SELECT user_id FROM "user" WHERE username = 'admin' LIMIT 1
-            `);
-
-            if (adminUser.length > 0) {
-                await queryRunner.query(`
-                    INSERT INTO webshop (webshop_id, teacher_id, subject_name, paying_instrument, paying_instrument_icon, header_color_code, status)
-                    VALUES (0, ${adminUser[0].user_id}, 'Globális Webshop', 'PP', 'default_icon_url', '#000000', 'active')
-                `);
-            }
-        }
-
-        await queryRunner.query(`
-            SELECT setval('webshop_webshop_id_seq', (SELECT COALESCE(MAX(webshop_id), 0) FROM "webshop"), true);
-        `);
-
-        await queryRunner.query(`
-            INSERT INTO user_balance (user_id, webshop_id, amount)
-            SELECT u.user_id, 0, 100.00
-            FROM "user" u
-            WHERE NOT EXISTS (
-                SELECT 1 FROM user_balance 
-                WHERE user_id = u.user_id AND webshop_id = 0
-            )
-        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

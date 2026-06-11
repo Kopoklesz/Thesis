@@ -145,6 +145,12 @@ Hallgató oldalon:
 #### Karbantartás
 - Automatikus cleanup task: lejárt kódok és QR-ok deaktiválása
 
+#### Nyilvános referencia mód
+- `REFERENCE_MODE=true` esetén a fiókkezelés lezárul: nincs regisztráció, jelszóváltoztatás, felhasználó-törlés, szerepkör- és demo-mód állítás
+- A bejelentkezés legördülő menüből történik az előre seedelt minta fiókokkal
+- Minden más funkció (webshopok, termékek, pontosztás, vásárlás) szabadon kipróbálható
+- A publikusan megjelenő nevek (felhasználónév, webshop-, termék- és kategórianevek) trágárság-szűrőn mennek át
+
 #### UI/UX
 - Magyar és angol nyelv (i18next)
 - Reszponzív elrendezés
@@ -195,7 +201,29 @@ DB_NAME=<adatbázis neve>
 JWT_SECRET=<erős, egyedi titkos kulcs>
 PORT=3001
 NODE_ENV=development
+REFERENCE_MODE=false
 ```
+
+---
+
+### 🧪 Minta fiókok (referencia verzió)
+
+A migrációk lefuttatása után az alábbi minta fiókok állnak rendelkezésre, három minta webshoppal, termékekkel és hallgatói egyenlegekkel együtt. Mindegyik fiók jelszava: **`PannonDemo1.`**
+
+| Fiók | Szerepkör | Email |
+|---|---|---|
+| `admin` | Admin | admin@uni-pannon.hu |
+| `TANAR1` | Oktató | tanar1@teacher.uni-pannon.hu |
+| `TANAR2` | Oktató | tanar2@teacher.uni-pannon.hu |
+| `DIAK01` | Hallgató | diak01@student.uni-pannon.hu |
+| `DIAK02` | Hallgató | diak02@student.uni-pannon.hu |
+
+**Referencia mód** (`REFERENCE_MODE=true` a backendnek, `REACT_APP_REFERENCE_MODE=true` a frontendnek — Docker Compose alatt ez az alapértelmezés):
+- a bejelentkezési oldalon legördülő menü jelenik meg a minta fiókokkal (jelszó beírása nélkül),
+- az önregisztráció és minden fiókmódosító művelet le van tiltva, így a megosztott fiókok nem sajátíthatók ki,
+- a webshop- és terméknevekre trágárság-szűrő érvényes, hogy a publikus felületen ne jelenhessen meg sértő tartalom.
+
+Lokális fejlesztéshez (`REFERENCE_MODE=false`) a teljes funkcionalitás — regisztrációval együtt — elérhető.
 
 ---
 
@@ -350,6 +378,12 @@ Student side:
 #### Maintenance
 - Automatic cleanup task: deactivates expired codes and QRs
 
+#### Public Reference Mode
+- With `REFERENCE_MODE=true`, account management is locked down: no registration, password change, user deletion, role or demo-mode changes
+- Login happens via a dropdown of pre-seeded sample accounts
+- Everything else (webshops, products, point distribution, purchasing) remains fully usable
+- Publicly visible names (username, webshop, product and category names) pass through a profanity filter
+
 #### UI/UX
 - Hungarian and English language support (i18next)
 - Responsive layout
@@ -393,7 +427,29 @@ DB_NAME=<db name>
 JWT_SECRET=<strong random secret>
 PORT=3001
 NODE_ENV=development
+REFERENCE_MODE=false
 ```
+
+---
+
+### 🧪 Sample Accounts (Reference Version)
+
+After running the migrations, the following sample accounts are available, along with three sample webshops, products and student balances. The password for every account is **`PannonDemo1.`**
+
+| Account | Role | Email |
+|---|---|---|
+| `admin` | Admin | admin@uni-pannon.hu |
+| `TANAR1` | Teacher | tanar1@teacher.uni-pannon.hu |
+| `TANAR2` | Teacher | tanar2@teacher.uni-pannon.hu |
+| `DIAK01` | Student | diak01@student.uni-pannon.hu |
+| `DIAK02` | Student | diak02@student.uni-pannon.hu |
+
+**Reference mode** (`REFERENCE_MODE=true` for the backend, `REACT_APP_REFERENCE_MODE=true` for the frontend — both default to true under Docker Compose):
+- the login page shows a dropdown of the sample accounts (no password entry needed),
+- self-registration and all account-modifying operations are disabled, so the shared accounts cannot be hijacked,
+- webshop and product names pass through a profanity filter so no offensive content can appear on the public site.
+
+For local development (`REFERENCE_MODE=false`) the full feature set — including registration — is available.
 
 ---
 

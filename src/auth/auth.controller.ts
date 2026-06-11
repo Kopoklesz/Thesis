@@ -17,6 +17,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { DemoGuard } from './guards/demo.guard';
+import { ReferenceModeGuard } from './guards/reference-mode.guard';
 import { Roles } from './decorators/roles.decorator';
 import {
   RegisterDto,
@@ -32,9 +33,15 @@ export class AuthController {
   constructor(private authService: AuthService) { }
 
   @Post('register')
+  @UseGuards(ReferenceModeGuard)
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto): Promise<LoginResponseDto> {
     return this.authService.register(registerDto);
+  }
+
+  @Get('reference-mode')
+  getReferenceMode(): { referenceMode: boolean } {
+    return { referenceMode: process.env.REFERENCE_MODE === 'true' };
   }
 
   @Post('login')
@@ -59,7 +66,7 @@ export class AuthController {
   }
 
   @Put('change-password')
-  @UseGuards(JwtAuthGuard, DemoGuard)
+  @UseGuards(JwtAuthGuard, DemoGuard, ReferenceModeGuard)
   async changePassword(
     @Request() req,
     @Body() changePasswordDto: ChangePasswordDto,
@@ -95,14 +102,14 @@ export class AuthController {
   }
 
   @Delete('users/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, ReferenceModeGuard)
   @Roles(UserRole.ADMIN)
   async deleteUser(@Param('id', ParseIntPipe) userId: number): Promise<{ message: string }> {
     return this.authService.deleteUser(userId);
   }
 
   @Put('users/:id/role')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, ReferenceModeGuard)
   @Roles(UserRole.ADMIN)
   async updateUserRole(
     @Param('id', ParseIntPipe) userId: number,
@@ -119,7 +126,7 @@ export class AuthController {
   }
 
   @Put('users/:id/demo')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, ReferenceModeGuard)
   @Roles(UserRole.ADMIN)
   async toggleDemoMode(
     @Param('id', ParseIntPipe) userId: number,
